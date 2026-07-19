@@ -6,19 +6,22 @@ import { episodePasses } from "./lib/query";
 import type { Extent } from "./lib/stats";
 import { extentOf } from "./lib/stats";
 import Masthead from "./components/Masthead";
+import QuerySection from "./components/QuerySection";
 import DefectsSection from "./components/DefectsSection";
 import AdjudicationSection from "./components/AdjudicationSection";
 import ExportSection from "./components/ExportSection";
+import ApiNotes from "./components/ApiNotes";
 import EpisodeDetail from "./components/EpisodeDetail";
 
 const NAV = [
+  { id: "queries", label: "the queries" },
   { id: "defects", label: "01 defects" },
   { id: "adjudication", label: "02 adjudication" },
   { id: "export", label: "export" },
 ];
 
 export default function App() {
-  const { data, error } = useData();
+  const { data, queries, error } = useData();
 
   const [clauses, setClauses] = useState<Clause[]>([
     { id: 1, metric: "debris_end", op: "<", value: 0.15 },
@@ -116,7 +119,7 @@ export default function App() {
             Winnow
           </a>
           <span className="hidden text-xs text-ink3 sm:inline">
-            every episode graded from the recording itself
+            every episode graded by query, from the recording itself
           </span>
           <nav className="ml-auto flex gap-5 font-mono text-xs" aria-label="sections">
             {NAV.map((n) => (
@@ -141,6 +144,7 @@ export default function App() {
             heroHz={hero.metrics.true_hz}
           />
         )}
+        {queries && <QuerySection queries={queries} />}
         <DefectsSection
           episodes={episodes}
           frameTotal={s.n_frames}
@@ -157,11 +161,15 @@ export default function App() {
           selected={selected}
           onSelect={setSelected}
         />
+        {queries && <ApiNotes version={queries.rerun_version} />}
       </main>
 
       <footer className="border-t border-line">
         <div className="mx-auto flex max-w-[1180px] flex-wrap items-baseline gap-x-6 gap-y-1 px-6 py-6 font-mono text-[11px] text-ink2">
-          <span>winnow · built on the Rerun query API</span>
+          <span>
+            winnow · built on the Rerun Query API
+            {queries ? ` · rerun-sdk ${queries.rerun_version}` : ""}
+          </span>
           <span>
             every figure computed from the recording itself; none taken from its metadata
           </span>

@@ -151,8 +151,13 @@ export default function ExportSection({
         </h2>
         <p className="mt-4 max-w-3xl text-[15px] leading-relaxed text-ink2">
           There is no separate cleaning step: whatever passes this query is the dataset the export
-          writes. Drag a threshold and watch episodes drop out of the wall below. Every tile is
-          clickable.
+          writes. The clause runs against the metrics table from{" "}
+          <a href="#queries" className="text-ink underline underline-offset-2">
+            query 02
+          </a>
+          , and the episode ids that survive go straight into{" "}
+          <code className="font-mono text-[13px] text-ink">dataset.filter_segments(...)</code>. Drag
+          a threshold and watch episodes drop out of the wall below. Every tile is clickable.
         </p>
       </header>
 
@@ -261,18 +266,31 @@ export default function ExportSection({
         </div>
       </div>
 
-      <div className="mt-8 flex items-center gap-3 bg-ink px-4 py-3">
-        <code className="min-w-0 flex-1 truncate font-mono text-[13px] text-paper">
-          <span className="text-line2">$ </span>
-          {command}
-        </code>
-        <button
-          type="button"
-          className="shrink-0 border border-line2/40 px-3 py-1 font-mono text-xs text-paper hover:border-paper"
-          onClick={copy}
-        >
-          {copied ? "copied" : "copy"}
-        </button>
+      <div className="mt-8 bg-ink">
+        <div className="flex items-baseline gap-3 border-b border-ink2/50 px-4 py-2.5">
+          <span className="shrink-0 font-mono text-[11px] text-ink3">sql</span>
+          <code className="min-w-0 flex-1 overflow-x-auto font-mono text-[13px] whitespace-nowrap text-paper">
+            <span className="text-line2">SELECT </span>episode<span className="text-line2"> FROM </span>
+            metrics<span className="text-line2"> WHERE </span>
+            {where || <span className="text-ink3">true</span>}
+          </code>
+          <span className="shrink-0 font-mono text-[11px] text-keep" aria-live="polite">
+            {keptIds.size} rows
+          </span>
+        </div>
+        <div className="flex items-center gap-3 px-4 py-2.5">
+          <code className="min-w-0 flex-1 overflow-x-auto font-mono text-[13px] whitespace-nowrap text-paper">
+            <span className="text-line2">$ </span>
+            {command}
+          </code>
+          <button
+            type="button"
+            className="shrink-0 border border-line2/40 px-3 py-1 font-mono text-xs text-paper hover:border-paper"
+            onClick={copy}
+          >
+            {copied ? "copied" : "copy"}
+          </button>
+        </div>
       </div>
 
       <div className="mt-8">

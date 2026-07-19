@@ -45,3 +45,57 @@ export interface Data {
   summary: Summary;
   episodes: Episode[];
 }
+
+/** A result set captured verbatim from a real run of the query. */
+export interface QueryTable {
+  columns: string[];
+  rows: (string | number | null)[][];
+}
+
+export interface GapStats {
+  min: number;
+  max: number;
+  sd: number;
+  hz: number;
+}
+
+/** One step of winnow/querylog.py — the query, and what it actually returned. */
+export interface QueryStep {
+  id: "serve" | "inspect" | "align" | "filter" | "compare";
+  verb: string;
+  ms?: number;
+  sql?: string;
+  result?: QueryTable;
+  /** serve */
+  segments?: number;
+  columns?: number;
+  indexes?: string[];
+  n_derived?: number;
+  n_video?: number;
+  sample_derived?: string[];
+  /** inspect */
+  rows_in?: number;
+  rows_out?: number;
+  claimed_hz?: number;
+  measured_hz?: number;
+  pct_dropped?: number;
+  /** align */
+  segment?: string;
+  target_hz?: number;
+  before?: GapStats;
+  after?: GapStats;
+  gaps_before?: number[];
+  gaps_after?: number[];
+  /** filter */
+  where?: string;
+  segments_in?: number;
+  segments_out?: number;
+  columns_in?: number;
+  columns_out?: number;
+  rejected?: string[];
+}
+
+export interface QueryLog {
+  rerun_version: string;
+  steps: QueryStep[];
+}

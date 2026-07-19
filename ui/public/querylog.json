@@ -1,0 +1,274 @@
+{
+  "rerun_version": "0.34.1",
+  "steps": [
+    {
+      "id": "serve",
+      "verb": "serve",
+      "segments": 58,
+      "columns": 62,
+      "indexes": [
+        "frame_idx",
+        "log_time",
+        "naive_time",
+        "true_time"
+      ],
+      "n_derived": 20,
+      "n_video": 3,
+      "sample_derived": [
+        "/timing/dt_ms",
+        "/timing/drift",
+        "/timing/dropped_tick",
+        "/task/debris_remaining",
+        "/tracking_error/left/j4"
+      ]
+    },
+    {
+      "id": "inspect",
+      "verb": "inspect",
+      "sql": "WITH frame AS (\n  SELECT\n    rerun_segment_id                                   AS episode,\n    frame_idx,\n    \"/timing/dt_ms:Scalars:scalars\"[1]                 AS dt_ms,\n    \"/timing/dropped_tick:Scalars:scalars\"[1]          AS dropped,\n    \"/timing/elapsed_true:Scalars:scalars\"[1]          AS elapsed,\n    \"/task/debris_remaining:Scalars:scalars\"[1]        AS debris,\n    \"/tracking_error/left/gripper:Scalars:scalars\"[1]  AS err_left_grip,\n    \"/tracking_error/right/gripper:Scalars:scalars\"[1] AS err_right_grip,\n    \"/tracking_error/left/j4:Scalars:scalars\"[1]       AS err_left_j4\n  FROM frames\n)\nSELECT\n  episode,\n  count(*)                                        AS n_frames,\n  round(max(elapsed), 1)                          AS duration_s,\n  round(count(*) / max(elapsed), 2)               AS true_hz,\n  round(100.0 * avg(dropped), 1)                  AS pct_dropped,\n  round(max(dt_ms), 0)                            AS worst_gap_ms,\n  round(last_value(debris ORDER BY frame_idx), 3) AS debris_end,\n  round(max(err_left_j4), 3)                      AS peak_err_left_j4,\n  round(avg(err_left_grip + err_right_grip) / 2, 4) AS mean_grip_err\nFROM frame\nGROUP BY episode\nORDER BY episode",
+      "ms": 939.9,
+      "rows_in": 28219,
+      "rows_out": 58,
+      "result": {
+        "columns": [
+          "episode",
+          "n_frames",
+          "true_hz",
+          "pct_dropped",
+          "worst_gap_ms",
+          "debris_end"
+        ],
+        "rows": [
+          [
+            "ep 07",
+            547.0,
+            11.16,
+            34.6,
+            134.0,
+            0.102
+          ],
+          [
+            "ep 08",
+            543.0,
+            11.26,
+            33.3,
+            134.0,
+            0.053
+          ],
+          [
+            "ep 09",
+            564.0,
+            11.18,
+            34.2,
+            134.0,
+            0.134
+          ],
+          [
+            "ep 10",
+            624.0,
+            10.99,
+            36.5,
+            134.0,
+            0.097
+          ],
+          [
+            "ep 11",
+            613.0,
+            11.29,
+            33.0,
+            134.0,
+            0.065
+          ],
+          [
+            "ep 12",
+            666.0,
+            11.31,
+            32.7,
+            134.0,
+            0.029
+          ]
+        ]
+      },
+      "claimed_hz": 15.0,
+      "measured_hz": 11.15,
+      "pct_dropped": 34.6
+    },
+    {
+      "id": "align",
+      "verb": "align",
+      "ms": 324.9,
+      "segment": "ep 07",
+      "rows_in": 28219,
+      "rows_out": 25357,
+      "target_hz": 10.0,
+      "before": {
+        "min": 66.7,
+        "max": 133.7,
+        "sd": 31.7,
+        "hz": 11.13
+      },
+      "after": {
+        "min": 100.0,
+        "max": 100.0,
+        "sd": 0.0,
+        "hz": 10.0
+      },
+      "gaps_before": [
+        66.8,
+        133.3,
+        66.7,
+        66.8,
+        133.3,
+        66.7,
+        66.8,
+        66.7,
+        133.4,
+        66.7,
+        66.7,
+        133.3,
+        66.9,
+        133.3,
+        66.7,
+        66.7,
+        66.7,
+        66.8,
+        66.7,
+        66.7,
+        133.4,
+        66.7,
+        133.3,
+        66.7,
+        66.9,
+        133.3,
+        66.8,
+        66.7,
+        66.7,
+        66.8,
+        66.7,
+        66.7,
+        66.7,
+        66.7,
+        66.7,
+        66.7,
+        133.4,
+        66.7,
+        66.9,
+        133.4,
+        66.7,
+        66.8,
+        133.4,
+        133.3,
+        66.8,
+        67.4,
+        133.2,
+        133.1
+      ],
+      "gaps_after": [
+        100.0,
+        100.0,
+        100.0,
+        100.0,
+        100.0,
+        100.0,
+        100.0,
+        100.0,
+        100.0,
+        100.0,
+        100.0,
+        100.0,
+        100.0,
+        100.0,
+        100.0,
+        100.0,
+        100.0,
+        100.0,
+        100.0,
+        100.0,
+        100.0,
+        100.0,
+        100.0,
+        100.0,
+        100.0,
+        100.0,
+        100.0,
+        100.0,
+        100.0,
+        100.0,
+        100.0,
+        100.0,
+        100.0,
+        100.0,
+        100.0,
+        100.0,
+        100.0,
+        100.0,
+        100.0,
+        100.0,
+        100.0,
+        100.0,
+        100.0,
+        100.0,
+        100.0,
+        100.0,
+        100.0,
+        100.0
+      ]
+    },
+    {
+      "id": "filter",
+      "verb": "filter",
+      "where": "pct_dropped < 40 AND debris_end < 0.3 AND worst_gap_ms < 500",
+      "ms": 1161.4,
+      "segments_in": 58,
+      "segments_out": 55,
+      "columns_in": 62,
+      "columns_out": 28,
+      "rows_out": 24295,
+      "rejected": [
+        "ep 27",
+        "ep 40",
+        "ep 48"
+      ]
+    },
+    {
+      "id": "compare",
+      "verb": "compare",
+      "sql": "SELECT\n  CASE WHEN l.verdict = 'bad' THEN 'human failed it'\n       ELSE 'human passed it' END        AS human,\n  CASE WHEN p.fired  THEN 'panel flagged it'\n       ELSE 'panel silent'  END          AS panel,\n  count(*)                               AS episodes,\n  CASE WHEN count(*) <= 12\n       THEN string_agg(replace(m.episode, 'episode_00', 'ep '), ', '\n                       ORDER BY m.episode)\n       ELSE '(the rest of the corpus)' END AS which\nFROM metrics m\nJOIN labels l ON l.episode = m.episode\nJOIN panel  p ON p.episode = m.episode\nGROUP BY 1, 2\nORDER BY 1 DESC, 2 DESC",
+      "ms": 539.6,
+      "result": {
+        "columns": [
+          "human",
+          "panel",
+          "episodes",
+          "which"
+        ],
+        "rows": [
+          [
+            "human passed it",
+            "panel silent",
+            48.0,
+            "(the rest of the corpus)"
+          ],
+          [
+            "human passed it",
+            "panel flagged it",
+            2.0,
+            "ep 21, ep 48"
+          ],
+          [
+            "human failed it",
+            "panel silent",
+            1.0,
+            "ep 22"
+          ],
+          [
+            "human failed it",
+            "panel flagged it",
+            7.0,
+            "ep 11, ep 14, ep 24, ep 27, ep 32, ep 40, ep 41"
+          ]
+        ]
+      }
+    }
+  ]
+}

@@ -4,8 +4,8 @@
 PY := uv run --quiet python
 export PYTHONPATH := winnow
 
-.PHONY: all vision transcode ingest metrics align export detect webdata blueprint \
-        view view-one view-flagged episodes ui clean
+.PHONY: all vision transcode ingest metrics align export detect webdata querylog \
+        blueprint view view-one view-flagged episodes ui clean
 
 all: metrics detect
 
@@ -33,6 +33,11 @@ detect:
 
 webdata: detect
 	$(PY) winnow/webdata.py
+
+# Runs every query in the pipeline, times it, and captures its real output
+# for the dashboard's method section.
+querylog: ingest detect
+	$(PY) winnow/querylog.py
 
 blueprint:
 	$(PY) winnow/blueprint.py

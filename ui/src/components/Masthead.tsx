@@ -15,6 +15,12 @@ const STAGES = ["scattered", "approach", "sweep", "sweep", "dump", "table clear"
 export default function Masthead({ summary, heroName, heroPicks, heroHz }: MastheadProps) {
   const contents = [
     {
+      href: "#queries",
+      n: "00",
+      title: "Five queries do all the work",
+      sub: "serve, inspect, align, filter, compare — each with the output it actually returned",
+    },
+    {
       href: "#defects",
       n: "01",
       title: "Nine episodes are defective",
@@ -43,14 +49,16 @@ export default function Masthead({ summary, heroName, heroPicks, heroHz }: Masth
         <div>
           <p className="lede text-2xl leading-snug text-ink md:text-[1.7rem]">
             A two-arm robot sweeps pasta into a dustpan and tips it into a basket. Fifty-eight
-            demonstrations were recorded as training data, each hand-labelled good or bad. winnow
-            graded them all again &mdash; by machine, from the footage and signals themselves
-            &mdash; and caught defects the hand labels had passed.
+            demonstrations were recorded as training data, each hand-labelled good or bad. The whole
+            corpus goes into a Rerun catalog, and every question below &mdash; which takes are
+            defective, what clock they were really recorded on, which ones a policy should train on
+            &mdash; is answered by a query against it.
           </p>
           <p className="mt-5 text-sm leading-relaxed text-ink2">
-            Start with the evidence in Finding 01, then use the query at the end &mdash; it is the
-            same WHERE clause the export pipeline runs. Click any episode anywhere on this page to
-            open its full record.
+            The queries come first, with the results they returned. Then the defects they found,
+            including two the hand labels had passed. The query at the end is live: drag a threshold
+            and watch the training set change. Click any episode anywhere on this page to open its
+            full record.
           </p>
         </div>
 
