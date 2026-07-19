@@ -13,6 +13,25 @@ policy works: **which of these episodes should you actually train on?**
 The videos are 424x240 at about 11 Hz. You cannot answer that by scrubbing
 through them. So the corpus goes into a Rerun catalog and the answer is a query.
 
+---
+
+## The state of the art is a person watching everything
+
+Here is how the corpus arrived. A teammate sat through all 65 recordings and
+sent back a list.
+
+![A WhatsApp message listing good episode numbers, ending with "Don't forget to filter the bad episodes"](docs/images/01-labels-from-a-teammate.png)
+
+That is one bit per episode, produced by a human at watch speed, and it does not
+say *why*. It is also the only quality signal the dataset ships with. Everything
+below is an attempt to do better than it — and, where the two disagree, to
+settle the argument with evidence instead of seniority.
+
+Episodes 0-6 are dropped up front: an early batch recorded with the wrong action
+and speed settings, a known-bad *batch* rather than seven defects to rediscover.
+That leaves 58 episodes, of which the teammate flagged eight: 11, 14, 22, 24,
+27, 32, 40 and 41.
+
 ## The corpus is mis-timed, and a query is how you find out
 
 `meta.json` declares `"fps": 15` for every episode. The recorder's own
@@ -55,6 +74,15 @@ Logging both `true_time` and `naive_time` makes the defect a first-class,
 queryable quantity rather than a footnote. Scrubbing between the two timelines
 in the viewer shows them drift apart in real time.
 
+![The Rerun viewer showing three camera panes over four time series: elapsed seconds, drift, inter-frame gap, debris remaining and per-joint tracking error](docs/images/02-viewer.png)
+
+The blueprint pairs the three camera streams with the derived signals, so every
+claim the pipeline makes has the footage that produced it directly above it.
+`drift, seconds` is the gap between the two clocks: more than ten seconds by the
+end of a forty-five second episode. `inter-frame gap` is 66 or 133 ms and never
+anything between. `debris remaining` is the fraction of the initial pile still
+on the table, read off the top camera.
+
 ### Reduce the corpus in SQL
 
 `dataset.reader()` returns a DataFusion frame, so cross-episode analysis is
@@ -94,36 +122,159 @@ diff the manifests.
 
 ## Detecting bad demonstrations
 
-Human quality labels are one bit per episode and do not say *why*. The pipeline
-derives signals that do. Every feature is a plain physical quantity: tracking
-error, inter-frame gaps, frozen frames, debris remaining. None are tuned against
-the labels; the labels are only used afterwards, to score the detectors.
+The pipeline derives signals that say *why* an episode is bad. Every feature is
+a plain physical quantity: tracking error, inter-frame gaps, frozen frames,
+debris remaining. None are tuned against the human labels; the labels are only
+used afterwards, to score the detectors.
+
+| detector | fires | what it measures |
+| --- | --- | --- |
+| `debris_outside_basket` | 7 | a piece at rest, outside the basket, that nobody came back for |
+| `task_not_completed` | 1 | the pile is still on the table when the episode ends |
+| `truncated` | 1 | the episode is far shorter than any complete demonstration |
+| `capture_stall` | 1 | a gap in the recording with no data in it at all |
 
 The detector that mattered most reads the end state of the task. Sweeping
-succeeds only when the debris is inside the basket, so the failure to look for
-is a piece left at rest somewhere else: on the table, or still in the dustpan.
-Three episodes fail exactly that way and are invisible to every aggregate signal,
-because one piece of pasta is a rounding error against the initial pile.
+succeeds only when the debris is inside the basket, so the failure surface is
+not "how much yellow remains" but "is there a piece at rest somewhere else":
+on the table, or still in the dustpan. Three episodes fail exactly that way and
+are invisible to every aggregate signal, because one piece of pasta is a
+rounding error against the initial pile.
 
-The panel flags nine episodes and all nine were confirmed defective on review,
-including two the hand labels had passed. A tenth disagreement went the other
-way: ep 22 is labelled bad but looks clean on review.
+Two resting surfaces need different evidence. A piece on the white table is
+found by tracking a static yellow blob with bright surroundings, then requiring
+positive proof of cleanup: after the blob was last seen, that patch must appear
+bare and bright for several consecutive frames. Absence is not proof, because an
+arm parked on top of a piece also makes it vanish — which is exactly what
+happens in ep 40. A piece in the pan is checked only over the final seconds,
+when the arms are parked, since a loaded pan mid-carry is correct behaviour. The
+basket is located per episode as the one dark object that survives a pixelwise
+median, rather than by a hardcoded screen region, because the dustpan drifts
+through the same corner during the dump.
 
-A detector was also deleted for measuring its own threshold rather than the
-robot. Both stories, and the limitations of what survives, are in
-[`docs/detection.md`](docs/detection.md).
+## The dashboard is a two-way comparison, not a score
+
+![Triage dashboard with three columns: both flagged (7 episodes), human flagged and panel silent (1), panel flagged and human passed (2)](docs/images/03-triage-dashboard.png)
+
+The panel flags nine episodes. Seven of them are on the hand-labelled bad list.
+One episode the human failed, the panel passed. Two the human passed, the panel
+failed. The dashboard presents that as three columns rather than an accuracy
+figure, because the labels are one person's reading of 424x240 video and the
+detectors are measurements, and when they disagree the useful move is to go and
+look.
+
+Which is possible, because the detections are specific enough to check. Not a
+quality score — a sentence with a coordinate in it:
+
+> a piece was left on the table at (226, 98) in the top view, held still for 45
+> frames and last seen before an arm parked over it
+
+Open the footage and hover that pixel.
+
+![The Rerun viewer's pixel inspector open on the top camera at position 226, 98, showing the sampled colour of a pasta piece](docs/images/04-go-look-at-the-pixel.png)
+
+It is there. About twenty pixels, in one of twenty-eight thousand frames. That
+specificity is the product: every flag comes with the frame, the coordinate and
+the reason, so a human can overturn it in ten seconds if it is wrong.
+
+## Where the panel and the human disagree
+
+All three disagreements went back to a human for review, and all three resolved
+in the panel's favour.
+
+| episode | hand label | panel | on review |
+| --- | --- | --- | --- |
+| 22 | bad | clean | the demonstration looks clean; the label is wrong |
+| 21 | good | defect | a piece really is left on the table |
+| 48 | good | defect | the capture freezes for 1,211 ms mid-episode |
+
+Episodes 21 and 22 turned out to be transposed in the hand list:
+
+![WhatsApp: "according to rerun we got 21 and 22 mixed up" — "we marked 21 as good even though there's a piece left on the table at the end, and we marked 22 as bad even though nothing wrong with it"](docs/images/05-mixed-up-21-and-22.png)
+
+Episode 48 is a different kind of defect. `capture_stall` fires on a 1,211 ms
+window with no rows in it — not a long gap, an absence. The footage says the
+same thing:
+
+![WhatsApp: "episode 48 is cooked btw" — "one of the wrist cam recordings freezes up half way thru, wrist_1.mp4 specifically", "around the 16 second mark"](docs/images/06-episode-48-freezes.png)
+
+Both of those were on the good list. Both are now out of the training set.
+
+Three adjudications is a small sample and none of this is an accuracy claim. It
+is the argument for the shape of the tool: a detector that produces checkable
+sentences turns "is this dataset any good" into a question two people can settle
+in an afternoon.
+
+### A detector that was deleted
+
+An `incomplete_sequence` detector counted gripper open/close cycles and flagged
+any episode below the corpus modal value of eight. It looked like the strongest
+signal in the panel, catching five of the eight labelled-bad episodes.
+
+It was measuring nothing. The count comes from thresholding the gripper signal
+at the midpoint of each episode's own range, and sweeping that threshold from
+30% to 70% changes the count for *every* episode in the corpus, known-good ones
+included:
+
+```
+ep  8 (good)      [4, 8, 8, 8, 6]
+ep 33 (flagged)   [6, 8, 4, 4, 4]
+```
+
+It was reporting where the threshold sat, not what the robot did, so it was
+removed rather than recalibrated. Deleting it costs one labelled-bad episode and
+removes five spurious flags.
+
+### What is not robust
+
+An adversarial pass ran three lenses over the stray-debris detector —
+overfitting, false positives, robustness. Two passed. The robustness lens
+failed: perturbing each constant by 25% one at a time, 4 of 17 change the
+verdict, and all four are the chroma gates separating pasta from the wooden
+brush handle. They are calibrated to this rig, this pasta and this lighting.
+The geometric and temporal gates are much steadier, and the score separates
+widely at the cut — lowest flagged 1.40, highest unflagged 0.55, every
+known-good at or below 0.10 — so the threshold itself is not load-bearing.
+
+Full sweep, and the overfitting audit, in [`docs/detection.md`](docs/detection.md).
+
+## The curated set trains a policy
+
+Curation is only worth anything if something consumes it, so the surviving
+episodes go through to an ACT policy. `bundle.py` writes the 49 episodes the
+panel did not reject, resampled onto a uniform 10 Hz grid — 21,575 frames, three
+cameras, 14 DOF — with the rejection reasons recorded in the manifest beside the
+episode list.
+
+```
+modal run train/modal_act.py --step convert                        # -> LeRobotDataset
+modal run train/modal_act.py --step train --steps 100              # smoke test, cents
+modal run train/modal_act.py --step train --gpu H100 --steps 25000 # the real run
+modal run train/modal_act.py --step openloop                       # sanity check
+```
+
+Conversion is a separate remote step from training: building the dataset
+re-encodes ~19k frames across three cameras, and there is no reason to hold a
+GPU while it does.
+
+The open-loop check drives the trained policy on real observations with no arm
+in the room. It cannot tell you the policy sweeps — behaviour-cloning loss and
+open-loop action error are both weak proxies for task success. What it does
+establish is that the artifact loads, consumes real observations, and returns
+finite, well-formed action chunks in the right units, which is the class of
+failure worth ruling out before anyone plugs in a robot.
 
 ## Running it
 
 ```
 export WINNOW_SRC=/path/to/episode_folders
 uv sync
-make               # vision -> transcode -> ingest -> metrics -> detect
-make view          # every recording at once; switch in the Sources panel
+make                  # vision -> transcode -> ingest -> metrics -> detect
+make view             # every recording at once; switch in the Sources panel
 make view-one EP=32   # a single episode, much faster to start
-make view-flagged  # only the episodes the panel rejected
-make episodes      # list every episode and what fired on it
-make ui            # the triage dashboard
+make view-flagged     # only the episodes the panel rejected
+make episodes         # list every episode and what fired on it
+make ui               # the triage dashboard
 ```
 
 `transcode.py` is not optional: Rerun's `AssetVideo` rejects MPEG-4 Part 2,
@@ -150,6 +301,8 @@ rerun-sdk 0.34.
 | `bundle.py` | the curated training set, on a uniform clock |
 | `export.py` | a `WHERE` clause becomes a curated training set |
 | `blueprint.py` | viewer layout pairing cameras with derived signals |
+| `webdata.py` | the JSON the dashboard reads |
+| `train/modal_act.py` | convert, train and open-loop check on Modal |
 
 ## Query API notes
 
