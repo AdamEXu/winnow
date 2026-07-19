@@ -151,6 +151,64 @@ def train(steps: int = 25_000, batch_size: int = 8, num_workers: int = 8,
     return str(output)
 
 
+@app.function(image=image, gpu="A10", cpu=4, memory=16384, timeout=30 * 60,
+              volumes={VOLUME: volume})
+def openloop(run_name: str = "act-sweep-h100", checkpoint: str = "last", n: int = 256):
+    """Drive the trained policy on real observations, with no arm in the room.
+
+    This cannot tell you the policy sweeps. Behaviour-cloning loss and open-loop
+    action error are both weak proxies for task success. What it does establish
+    is that the artifact loads, consumes real observations, and returns
+    well-formed action chunks in the right units, which is the class of failure
+    worth ruling out before anyone plugs in a robot.
+    """
+    import numpy as np
+    import torch
+    from lerobot.datasets.lerobot_dataset import LeRobotDataset
+    from lerobot.policies import make_pre_post_processors
+    from lerobot.policies.act.modeling_act import ACTPolicy
+
+    path = VOLUME / "outputs" / run_name / "checkpoints" / checkpoint / "pretrained_model"
+    policy = ACTPolicy.from_pretrained(str(path))
+    policy.eval()
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    policy.to(device)
+
+    dataset = LeRobotDataset("winnow/sweep", root=str(DATASET))
+    # normalisation lives in these pipelines rather than inside the policy as of
+    # 0.6.0; calling the model directly feeds it unnormalised inputs
+    preprocessor, postprocessor = make_pre_post_processors(
+        policy.config, pretrained_path=str(path), dataset_stats=dataset.meta.stats)
+    picks = np.linspace(0, len(dataset) - 1, n).astype(int)
+
+    errors, predictions = [], []
+    with torch.no_grad():
+        for index in picks:
+            sample = dataset[int(index)]
+            policy.reset()
+            action = postprocessor(policy.select_action(preprocessor(sample)))
+            predicted = np.asarray(action, dtype=np.float32).reshape(-1)
+            predictions.append(predicted)
+            errors.append(np.abs(predicted - sample["action"].numpy().reshape(-1)))
+
+    predictions = np.stack(predictions)
+    errors = np.stack(errors)
+    report = {
+        "run": run_name,
+        "checkpoint": checkpoint,
+        "samples": int(len(picks)),
+        "action_dim": int(predictions.shape[-1]),
+        "finite": bool(np.isfinite(predictions).all()),
+        "l1_mean": float(errors.mean()),
+        "l1_p95": float(np.percentile(errors, 95)),
+        "l1_per_joint": [round(float(v), 4) for v in errors.mean(axis=0)],
+        "pred_range": [round(float(predictions.min()), 3), round(float(predictions.max()), 3)],
+    }
+    for key, value in report.items():
+        print(f"  {key}: {value}", flush=True)
+    return report
+
+
 @app.local_entrypoint()
 def main(step: str = "convert", steps: int = 25_000, batch_size: int = 8,
          gpu: str = "A10", cpu: int = 8, num_workers: int = 0,
@@ -159,8 +217,11 @@ def main(step: str = "convert", steps: int = 25_000, batch_size: int = 8,
     if step == "convert":
         print(convert.remote(use_videos=not images))
         return
+    if step == "openloop":
+        openloop.remote(run_name=run_name)
+        return
     if step != "train":
-        raise SystemExit("--step must be convert or train")
+        raise SystemExit("--step must be convert, train or openloop")
 
     workers = num_workers or cpu
     sized = train.with_options(gpu=gpu, cpu=cpu, memory=max(32768, cpu * 4096))
