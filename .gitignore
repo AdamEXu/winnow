@@ -18,3 +18,10 @@ ui/dist/
 
 # uv
 .venv/
+
+# generated artifacts (the small json summaries stay tracked)
+data/train_bundle/
+data/curated_*/
+data/sweep.rbl
+data/rrd
+data/video_h264
