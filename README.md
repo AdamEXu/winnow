@@ -118,9 +118,12 @@ robot. Both stories, and the limitations of what survives, are in
 ```
 export WINNOW_SRC=/path/to/episode_folders
 uv sync
-make            # vision -> transcode -> ingest -> metrics -> detect
-make view       # open a flagged episode in the Rerun viewer
-make ui         # the triage dashboard
+make               # vision -> transcode -> ingest -> metrics -> detect
+make view          # every recording at once; switch in the Sources panel
+make view-one EP=32   # a single episode, much faster to start
+make view-flagged  # only the episodes the panel rejected
+make episodes      # list every episode and what fired on it
+make ui            # the triage dashboard
 ```
 
 `transcode.py` is not optional: Rerun's `AssetVideo` rejects MPEG-4 Part 2,

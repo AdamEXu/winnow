@@ -4,7 +4,8 @@
 PY := uv run --quiet python
 export PYTHONPATH := winnow
 
-.PHONY: all vision transcode ingest metrics align export detect webdata blueprint view ui clean
+.PHONY: all vision transcode ingest metrics align export detect webdata blueprint \
+        view view-one view-flagged episodes ui clean
 
 all: metrics detect
 
@@ -36,9 +37,27 @@ webdata: detect
 blueprint:
 	$(PY) winnow/blueprint.py
 
-# Opens the episode with the 1.2 second capture stall.
+# Loads every recording at once; switch between them in the viewer's Sources
+# panel. Use view-one for a single episode, which starts much faster.
 view: blueprint
-	uv run --quiet rerun data/sweep.rbl data/rrd/episode_0048.rrd
+	uv run --quiet rerun data/sweep.rbl data/rrd/*.rrd
+
+# make view-one EP=32
+EP ?= 50
+view-one: blueprint
+	uv run --quiet rerun data/sweep.rbl \
+	  data/rrd/episode_$(shell printf '%04d' $(EP)).rrd
+
+# The episodes the detector panel rejected, for showing what it caught.
+view-flagged: blueprint
+	uv run --quiet rerun data/sweep.rbl $$($(PY) -c \
+	  "import json,paths,os; d=json.load(open(paths.artifact('detections.json'))); \
+	   print(' '.join(os.path.join(paths.RRD, k + '.rrd') for k,v in sorted(d.items()) if v))")
+
+episodes:
+	@$(PY) -c "import json,paths; d=json.load(open(paths.artifact('detections.json'))); \
+	  [print(f\"{k.replace('episode_','ep'):>6}  {'FLAGGED' if v else 'clean':<8}\" \
+	  + '; '.join(x['detector'] for x in v)) for k,v in sorted(d.items())]"
 
 ui:
 	cd ui && npm install && npm run dev
