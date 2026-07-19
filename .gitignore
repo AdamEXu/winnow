@@ -15,3 +15,6 @@ __pycache__/
 # frontend
 ui/node_modules/
 ui/dist/
+
+# uv
+.venv/

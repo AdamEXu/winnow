@@ -1,0 +1,21 @@
+[project]
+name = "winnow"
+version = "0.1.0"
+description = "Query-driven triage and curation for robot demonstration data"
+requires-python = ">=3.11"
+dependencies = [
+    "rerun-sdk[catalog]==0.34.1",
+    # rerun-sdk 0.34 rejects datafusion 54 outright
+    "datafusion~=53.0",
+    "av>=14",
+    "opencv-python>=4.11",
+    "numpy>=2",
+    "pandas>=2",
+    "pillow>=11",
+]
+
+[tool.uv]
+package = false
+
+[tool.ruff]
+line-length = 100

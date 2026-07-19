@@ -1,31 +1,47 @@
-# Full pipeline. Each stage is independent and skips work already done.
-.PHONY: all vision transcode ingest metrics align export blueprint clean
+# Each stage is independent and skips work that already exists.
+# Point WINNOW_SRC at the directory holding the episode_XXXX folders.
 
-all: metrics
+PY := uv run --quiet python
+export PYTHONPATH := winnow
+
+.PHONY: all vision transcode ingest metrics align export detect webdata blueprint view ui clean
+
+all: metrics detect
 
 vision:
-	cd winnow && python vision.py
+	$(PY) winnow/vision.py
 
 transcode:
-	cd winnow && python transcode.py
+	$(PY) winnow/transcode.py
 
 ingest: vision transcode
-	cd winnow && python ingest.py
+	$(PY) winnow/ingest.py
 
 metrics: ingest
-	cd winnow && python catalog.py
+	$(PY) winnow/catalog.py
 
 align: ingest
-	cd winnow && python align.py
+	$(PY) winnow/align.py
 
 export: ingest
-	cd winnow && python export.py
+	$(PY) winnow/export.py
+
+detect:
+	$(PY) winnow/features.py
+	$(PY) winnow/detect.py
+
+webdata: detect
+	$(PY) winnow/webdata.py
 
 blueprint:
-	cd winnow && python blueprint.py
+	$(PY) winnow/blueprint.py
 
+# Opens the episode with the 1.2 second capture stall.
 view: blueprint
-	rerun data/sweep.rbl data/rrd/episode_0048.rrd
+	uv run --quiet rerun data/sweep.rbl data/rrd/episode_0048.rrd
+
+ui:
+	cd ui && npm install && npm run dev
 
 clean:
 	/usr/bin/trash data/rrd data/video_h264 2>/dev/null || true

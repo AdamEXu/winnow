@@ -109,10 +109,11 @@ Results and the full detector panel are in [`docs/detection.md`](docs/detection.
 ## Running it
 
 ```
-pip install -r requirements.txt
 export WINNOW_SRC=/path/to/episode_folders
-make            # vision -> transcode -> ingest -> metrics
+uv sync
+make            # vision -> transcode -> ingest -> metrics -> detect
 make view       # open a flagged episode in the Rerun viewer
+make ui         # the triage dashboard
 ```
 
 `transcode.py` is not optional: Rerun's `AssetVideo` rejects MPEG-4 Part 2,

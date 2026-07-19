@@ -1,6 +1,0 @@
-rerun-sdk[catalog]==0.34.1
-datafusion~=53.0
-av>=14
-opencv-python>=4.11
-numpy>=2
-pandas
