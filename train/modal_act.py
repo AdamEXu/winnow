@@ -2,8 +2,9 @@
 
 Two steps, both remote, so nothing heavy has to be installed locally:
 
-    modal run train/modal_act.py --step convert    # bundle -> LeRobotDataset
-    modal run train/modal_act.py --step train      # ACT
+    modal run train/modal_act.py --step convert              # bundle -> LeRobotDataset
+    modal run train/modal_act.py --step train --steps 100    # smoke test, cents
+    modal run train/modal_act.py --step train                # ACT, 25k steps
 
 The bundle is uploaded separately and lives on a volume:
 
@@ -109,27 +110,31 @@ def convert():
     return str(DATASET)
 
 
-@app.function(image=image, gpu="A10G", cpu=8, memory=32768, timeout=8 * 60 * 60,
+@app.function(image=image, gpu="A10", cpu=8, memory=32768, timeout=8 * 60 * 60,
               volumes={VOLUME: volume})
-def train(steps: int = 30_000, batch_size: int = 8, num_workers: int = 8,
+def train(steps: int = 25_000, batch_size: int = 8, num_workers: int = 8,
           run_name: str = "act-sweep"):
     output = VOLUME / "outputs" / run_name
     command = [
         "lerobot-train",
-        f"--dataset.repo_id=winnow/sweep",
+        "--dataset.repo_id=winnow/sweep",
         f"--dataset.root={DATASET}",
         "--policy.type=act",
         "--policy.device=cuda",
         "--policy.use_amp=true",
         "--policy.push_to_hub=false",
+        # without this the schedule is sized for the 100k default and the
+        # learning rate never decays, which leaves a noisier final policy
+        f"--policy.scheduler_decay_steps={steps}",
         f"--output_dir={output}",
         f"--job_name={run_name}",
         f"--steps={steps}",
         f"--batch_size={batch_size}",
         f"--num_workers={num_workers}",
-        "--save_freq=5000",
+        f"--save_freq={max(steps // 6, 1000)}",
         "--log_freq=100",
         "--env_eval_freq=0",
+        "--wandb.enable=false",
     ]
     print(" ".join(command), flush=True)
     subprocess.run(command, check=True)

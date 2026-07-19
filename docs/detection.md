@@ -14,21 +14,35 @@ flagged eight: 11, 14, 22, 24, 27, 32, 40 and 41.
 
 | detector | fires | labelled bad | others |
 | --- | --- | --- | --- |
-| `incomplete_sequence` | 10 | 5 | 5 |
 | `debris_outside_basket` | 7 | 6 | 1 |
 | `task_not_completed` | 1 | 1 | 0 |
 | `truncated` | 1 | 1 | 0 |
 | `capture_stall` | 1 | 0 | 1 |
 
-Union: **8 of 8** labelled-bad episodes caught, plus seven episodes the human
-passed.
+The panel flags nine episodes: 11, 14, 21, 24, 27, 32, 40, 41 and 48. Seven are
+on the hand-labelled bad list. The other two are ep 21 and ep 48, and both were
+confirmed defective on review.
 
-### `incomplete_sequence`
+## A detector we deleted
 
-The strongest signal is structural rather than statistical. A complete
-demonstration cycles the right gripper exactly eight times; the count is the
-modal value across the corpus, not a fitted threshold. Episodes that cycle it
-four or six times are missing a phase of the task.
+An `incomplete_sequence` detector counted gripper open/close cycles and flagged
+any episode below the corpus modal value of eight. It looked like the strongest
+signal in the panel, catching five of the eight labelled-bad episodes.
+
+It was measuring nothing. The count comes from thresholding the gripper signal
+at the midpoint of each episode's own range, and sweeping that threshold from
+30% to 70% changes the count for *every* episode in the corpus, known-good ones
+included:
+
+```
+ep  8 (good)      [4, 8, 8, 8, 6]
+ep 33 (flagged)   [6, 8, 4, 4, 4]
+```
+
+At a 40% threshold every episode it flagged counts eight, exactly like the
+episodes it passed. The detector was reporting where the threshold sat, not what
+the robot did, so it was removed rather than recalibrated. Deleting it costs one
+labelled-bad episode (ep 22) and removes five spurious flags.
 
 ### `debris_outside_basket`
 
@@ -56,18 +70,22 @@ through the same corner during the dump, so a fixed zone does not work.
 
 ## Where the panel and the human disagree
 
-Seven episodes were flagged that the teammate passed. Two are confirmed real:
+Three episodes separate the panel from the hand labels. A human went back to the
+footage for each one, and all three resolved in the panel's favour.
 
-- **ep 48** has a 1,211 ms capture stall. It was on the good list. Shown the
-  timestamp, the teammate confirmed the episode is unusable.
-- **ep 21** was inspected frame by frame during review and does contain a real
-  piece of debris left in the wrong place.
+| episode | hand label | panel | on review |
+| --- | --- | --- | --- |
+| 22 | bad | clean | the demonstration looks clean; the label is wrong |
+| 21 | good | defect | a piece really is left on the table |
+| 48 | good | defect | the capture freezes for 1,211 ms mid-episode |
 
-The remaining five (16, 31, 33, 53, 63) cycle the gripper four or six times
-instead of eight. Whether that makes them unusable is a judgement call, which is
-why the dashboard presents agreement as a two-way comparison rather than an
-accuracy score. The labels are one person's reading of 424x240 video; the
-detectors are measurements. Where they disagree, both deserve to be shown.
+So the panel flags nine episodes and all nine are real defects, while the one
+episode it declined to flag against the label list turned out to be mislabelled.
+
+That is a small sample and it is not an accuracy claim. It is the reason the
+dashboard presents agreement as a two-way comparison rather than a score: the
+labels are one person's reading of 424x240 video, the detectors are
+measurements, and when they disagree the useful move is to go and look.
 
 ## Honest limitations
 

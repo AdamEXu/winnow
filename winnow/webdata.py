@@ -23,6 +23,15 @@ SPARK_POINTS = 160
 STRIP_FRAMES = 6
 THUMB_WIDTH = 200
 
+# Disagreements between the panel and the hand labels, after a human went back
+# to the footage to settle them. All three resolved in the panel's favour, which
+# is why `labelled` is presented as an opinion rather than as ground truth.
+ADJUDICATED = {
+    22: ("panel", "listed bad, but the demonstration looks clean on review"),
+    21: ("panel", "listed good; a piece really is left on the table"),
+    48: ("panel", "listed good; the capture freezes for 1.2 s mid-episode"),
+}
+
 # Recorded by a teammate who watched the footage. Treated as one opinion to
 # compare against, not as ground truth.
 LABELLED_GOOD = {7, 8, 9, 10, 12, 13, 15, 16, 17, 18, 19, 20, 21, 23, 25, 26, 28, 29, 30,
@@ -91,6 +100,7 @@ def build():
             "metrics": {k: (None if v is None else float(v)) for k, v in row.items()},
             "features": feat,
             "detections": fired.get(episode, []),
+            "adjudicated": ADJUDICATED.get(episode),
             "series": {
                 "debris": downsample(debris / baseline),
                 "dt_ms": downsample(np.diff(elapsed, prepend=elapsed[0]) * 1e3),

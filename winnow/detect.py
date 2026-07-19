@@ -49,14 +49,15 @@ def describe_stray(record):
 def panel(table, stray=None):
     """Boolean mask and message template per detector, aligned with `episodes`."""
     z = {k: robust_z(v) for k, v in table.items()}
-    modal_cycles = int(np.bincount(table["grip_cycles_right"].astype(int)).argmax())
 
+    # An `incomplete_sequence` detector used to live here, counting gripper
+    # open/close cycles against the corpus modal value of eight and flagging
+    # anything lower. It was removed: sweeping the threshold between 30% and 70%
+    # of each episode's gripper range changes the count for every episode in the
+    # corpus, known-good ones included, and at 40% all of its flags count eight
+    # like everything else. It measured where the threshold sat, not what the
+    # robot did. See docs/detection.md.
     detectors = {
-        "incomplete_sequence": (
-            table["grip_cycles_right"] < modal_cycles,
-            "the right gripper cycled {grip_cycles_right:.0f} times; a complete demonstration "
-            f"cycles it {modal_cycles}, so a phase of the task is missing",
-        ),
         "task_not_completed": (
             table["debris_end"] > 0.30,
             "{debris_end:.0%} of the debris was still on the table when the episode ended",

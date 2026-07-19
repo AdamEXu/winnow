@@ -13,21 +13,12 @@
  "episode_0013": [],
  "episode_0014": [
   {
-   "detector": "incomplete_sequence",
-   "why": "the right gripper cycled 6 times; a complete demonstration cycles it 8, so a phase of the task is missing"
-  },
-  {
    "detector": "debris_outside_basket",
    "why": "a piece was left on the table at (195, 56) in the top view, held still for 27 frames and last seen before an arm parked over it; a piece was left on the table at (195, 56) in the top view, held still for 29 frames and last seen before an arm parked over it"
   }
  ],
  "episode_0015": [],
- "episode_0016": [
-  {
-   "detector": "incomplete_sequence",
-   "why": "the right gripper cycled 6 times; a complete demonstration cycles it 8, so a phase of the task is missing"
-  }
- ],
+ "episode_0016": [],
  "episode_0017": [],
  "episode_0018": [],
  "episode_0019": [],
@@ -38,18 +29,9 @@
    "why": "a piece was left on the table at (234, 79) in the top view, held still for 92 frames and last seen before an arm parked over it; a piece was left on the table at (235, 78) in the top view, held still for 33 frames and still visible in the final frame"
   }
  ],
- "episode_0022": [
-  {
-   "detector": "incomplete_sequence",
-   "why": "the right gripper cycled 6 times; a complete demonstration cycles it 8, so a phase of the task is missing"
-  }
- ],
+ "episode_0022": [],
  "episode_0023": [],
  "episode_0024": [
-  {
-   "detector": "incomplete_sequence",
-   "why": "the right gripper cycled 4 times; a complete demonstration cycles it 8, so a phase of the task is missing"
-  },
   {
    "detector": "debris_outside_basket",
    "why": "a piece was left on the table at (199, 103) in the top view, held still for 45 frames and still visible in the final frame; a piece was still sitting in the dustpan at (206, 58) in the top view for 23 of the last 30 frames, never dumped; a piece was still sitting in the dustpan at (218, 72) in the top view for 30 of the last 30 frames, never dumped; a piece was still sitting in the dustpan at (204, 84) in the top view for 28 of the last 30 frames, never dumped"
@@ -58,10 +40,6 @@
  "episode_0025": [],
  "episode_0026": [],
  "episode_0027": [
-  {
-   "detector": "incomplete_sequence",
-   "why": "the right gripper cycled 4 times; a complete demonstration cycles it 8, so a phase of the task is missing"
-  },
   {
    "detector": "task_not_completed",
    "why": "122% of the debris was still on the table when the episode ended"
@@ -74,24 +52,14 @@
  "episode_0028": [],
  "episode_0029": [],
  "episode_0030": [],
- "episode_0031": [
-  {
-   "detector": "incomplete_sequence",
-   "why": "the right gripper cycled 6 times; a complete demonstration cycles it 8, so a phase of the task is missing"
-  }
- ],
+ "episode_0031": [],
  "episode_0032": [
   {
    "detector": "debris_outside_basket",
    "why": "a piece was left on the table at (193, 61) in the top view, held still for 194 frames and still visible in the final frame"
   }
  ],
- "episode_0033": [
-  {
-   "detector": "incomplete_sequence",
-   "why": "the right gripper cycled 4 times; a complete demonstration cycles it 8, so a phase of the task is missing"
-  }
- ],
+ "episode_0033": [],
  "episode_0034": [],
  "episode_0035": [],
  "episode_0036": [],
@@ -105,10 +73,6 @@
   }
  ],
  "episode_0041": [
-  {
-   "detector": "incomplete_sequence",
-   "why": "the right gripper cycled 6 times; a complete demonstration cycles it 8, so a phase of the task is missing"
-  },
   {
    "detector": "debris_outside_basket",
    "why": "a piece was left on the table at (227, 96) in the top view, held still for 61 frames and last seen before an arm parked over it; a piece was left on the table at (226, 98) in the top view, held still for 45 frames and last seen before an arm parked over it"
@@ -130,12 +94,7 @@
  "episode_0050": [],
  "episode_0051": [],
  "episode_0052": [],
- "episode_0053": [
-  {
-   "detector": "incomplete_sequence",
-   "why": "the right gripper cycled 6 times; a complete demonstration cycles it 8, so a phase of the task is missing"
-  }
- ],
+ "episode_0053": [],
  "episode_0054": [],
  "episode_0055": [],
  "episode_0056": [],
@@ -145,11 +104,6 @@
  "episode_0060": [],
  "episode_0061": [],
  "episode_0062": [],
- "episode_0063": [
-  {
-   "detector": "incomplete_sequence",
-   "why": "the right gripper cycled 6 times; a complete demonstration cycles it 8, so a phase of the task is missing"
-  }
- ],
+ "episode_0063": [],
  "episode_0064": []
 }

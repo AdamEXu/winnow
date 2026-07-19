@@ -29,12 +29,19 @@ COLUMNS = [f"/{kind}/{arm}/{joint}"
 
 
 def selection():
-    """Episodes a human passed, minus everything the panel flagged."""
+    """Everything the panel did not flag, warm-up batch aside.
+
+    The training set is defined by the measurements rather than by the hand
+    labels. Every episode the panel flagged was confirmed defective on review,
+    and the only episode where the labels disagreed without the panel agreeing
+    (ep 22) turned out to be mislabelled, so the labels are kept as a column to
+    compare against rather than used as the filter.
+    """
     with open(paths.artifact("detections.json")) as f:
         detections = json.load(f)
     flagged = {int(k.split("_")[1]) for k, v in detections.items() if v}
-    passed = {e for e in paths.episodes() if e not in WARMUP and e not in LABELLED_BAD}
-    return sorted(passed - flagged), sorted(passed & flagged), detections
+    candidates = {e for e in paths.episodes() if e not in WARMUP}
+    return sorted(candidates - flagged), sorted(flagged), detections
 
 
 def column(frame, kind, arm, joint):
@@ -84,7 +91,7 @@ def build(out_dir, hz=TARGET_HZ):
                                                    detections[f"episode_{e:04d}"]]
                               for e in dropped},
         "excluded_warmup": sorted(WARMUP),
-        "excluded_labelled_bad": sorted(LABELLED_BAD),
+        "hand_labelled_bad": sorted(LABELLED_BAD),
         "cameras": paths.CAMS,
         "state_dim": len(paths.ARMS) * len(paths.JOINTS),
     }
@@ -92,7 +99,7 @@ def build(out_dir, hz=TARGET_HZ):
         json.dump(manifest, f, indent=2)
 
     print(f"kept {len(keep)} episodes, {total} frames at {hz:g} Hz")
-    print(f"dropped {len(dropped)} that the human passed: "
+    print(f"dropped {len(dropped)} flagged by the panel: "
           + ", ".join(f"ep{e}" for e in dropped))
     print(f"bundle at {out_dir}")
     return manifest
