@@ -42,8 +42,14 @@ JOINT_NAMES = [f"{bus}_{joint}"
 
 @app.function(image=image, cpu=8, memory=32768, timeout=3 * 60 * 60,
               volumes={VOLUME: volume})
-def convert():
-    """Bundle of npz plus mp4 into a LeRobotDataset, sampled at the manifest's fps."""
+def convert(use_videos: bool = True):
+    """Bundle of npz plus mp4 into a LeRobotDataset, sampled at the manifest's fps.
+
+    `use_videos=False` stores frames as images instead of re-encoding them into
+    video. It costs disk (roughly 1 GB here, against ~200 MB) and buys random
+    access that never has to walk forward from a keyframe. Worth switching only
+    if the training logs show dataloading_s keeping pace with update_s.
+    """
     import cv2
     import numpy as np
     from lerobot.datasets.lerobot_dataset import LeRobotDataset
@@ -57,7 +63,7 @@ def convert():
     probe.release()
 
     features = {f"observation.images.{cam}": {
-        "dtype": "video", "shape": (height, width, 3),
+        "dtype": "video" if use_videos else "image", "shape": (height, width, 3),
         "names": ["height", "width", "channels"]} for cam in cams}
     features["observation.state"] = {
         "dtype": "float32", "shape": (manifest["state_dim"],), "names": JOINT_NAMES}
@@ -70,7 +76,7 @@ def convert():
 
     dataset = LeRobotDataset.create(
         repo_id="winnow/sweep", fps=int(manifest["fps"]), features=features,
-        robot_type="yam_bimanual", root=str(DATASET), use_videos=True)
+        robot_type="yam_bimanual", root=str(DATASET), use_videos=use_videos)
 
     for name in manifest["episodes"]:
         data = np.load(bundle / f"{name}.npz")
@@ -149,10 +155,10 @@ def train(steps: int = 25_000, batch_size: int = 8, num_workers: int = 8,
 @app.local_entrypoint()
 def main(step: str = "convert", steps: int = 25_000, batch_size: int = 8,
          gpu: str = "A10", cpu: int = 8, num_workers: int = 0,
-         run_name: str = "act-sweep"):
+         images: bool = False, run_name: str = "act-sweep"):
     """--step convert | train, with the hardware chosen at call time."""
     if step == "convert":
-        print(convert.remote())
+        print(convert.remote(use_videos=not images))
         return
     if step != "train":
         raise SystemExit("--step must be convert or train")
