@@ -3,9 +3,9 @@
 Query-driven triage and curation for robot demonstration data, built on the
 [Rerun](https://rerun.io) Query API.
 
-Sixty-five bimanual teleoperation episodes: two arms, a brush and a dustpan,
+Fifty-eight bimanual teleoperation episodes: two arms, a brush and a dustpan,
 sweeping pasta debris on a table and dumping it into a basket. Three cameras,
-14 degrees of freedom, 32,274 frames, 48 minutes of wall clock.
+14 degrees of freedom, 28,219 frames, 42 minutes of wall clock.
 
 The question that motivates all of it is the boring one that decides whether a
 policy works: **which of these episodes should you actually train on?**
@@ -20,9 +20,9 @@ timestamps disagree:
 
 | | claimed | measured |
 | --- | --- | --- |
-| frame rate | 15 Hz | **11.08 Hz** |
-| inter-frame gaps that are double length | 0% | **35.2%** |
-| duration of the corpus | 35.9 min | **48.5 min** |
+| frame rate | 15 Hz | **11.12 Hz** |
+| inter-frame gaps that are double length | 0% | **34.7%** |
+| duration of the corpus | 31.4 min | **42.2 min** |
 
 Every third frame arrives a full period late. The gap distribution is bimodal at
 66 ms and 133 ms with essentially nothing in between, which is the signature of
@@ -58,8 +58,8 @@ in the viewer shows them drift apart in real time.
 ### Reduce the corpus in SQL
 
 `dataset.reader()` returns a DataFusion frame, so cross-episode analysis is
-ordinary SQL over all 65 segments at once. Sixty-five episodes and 32,274 frames
-reduce to one row each in **1.7 seconds**:
+ordinary SQL over every segment at once. Fifty-eight episodes and 28,219 frames
+reduce to one row each in **under two seconds**:
 
 ```sql
 SELECT rerun_segment_id AS episode,
@@ -95,16 +95,23 @@ diff the manifests.
 ## Detecting bad demonstrations
 
 Human quality labels are one bit per episode and do not say *why*. The pipeline
-derives signals that do. Every feature is a plain physical quantity: gripper
-cycle counts, tracking error, inter-frame gaps, frozen frames, debris remaining.
-None of them are tuned against the labels; the labels are only used afterwards
-to score the detectors.
+derives signals that do. Every feature is a plain physical quantity: tracking
+error, inter-frame gaps, frozen frames, debris remaining. None are tuned against
+the labels; the labels are only used afterwards, to score the detectors.
 
-The single most useful signal turned out to be structural. A complete
-demonstration cycles the right gripper exactly eight times; episodes that cycle
-it four or six times are missing a phase of the task.
+The detector that mattered most reads the end state of the task. Sweeping
+succeeds only when the debris is inside the basket, so the failure to look for
+is a piece left at rest somewhere else: on the table, or still in the dustpan.
+Three episodes fail exactly that way and are invisible to every aggregate signal,
+because one piece of pasta is a rounding error against the initial pile.
 
-Results and the full detector panel are in [`docs/detection.md`](docs/detection.md).
+The panel flags nine episodes and all nine were confirmed defective on review,
+including two the hand labels had passed. A tenth disagreement went the other
+way: ep 22 is labelled bad but looks clean on review.
+
+A detector was also deleted for measuring its own threshold rather than the
+robot. Both stories, and the limitations of what survives, are in
+[`docs/detection.md`](docs/detection.md).
 
 ## Running it
 
@@ -136,6 +143,8 @@ rerun-sdk 0.34.
 | `align.py` | resamples onto a uniform grid via `using_index_values` |
 | `features.py` | one physical feature vector per episode |
 | `detect.py` | the detector panel, scored against the human labels |
+| `residual.py` | debris left outside the basket, per episode |
+| `bundle.py` | the curated training set, on a uniform clock |
 | `export.py` | a `WHERE` clause becomes a curated training set |
 | `blueprint.py` | viewer layout pairing cameras with derived signals |
 
