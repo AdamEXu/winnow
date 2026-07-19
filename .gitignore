@@ -1,0 +1,12 @@
+# derived artifacts — regenerate with `make`
+rrd/
+video_h264/
+curated_*/
+strips/
+debug/
+*.rrd
+*.rbl
+__pycache__/
+*.pyc
+.DS_Store
+.DS_Store
