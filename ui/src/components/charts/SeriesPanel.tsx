@@ -18,10 +18,9 @@ const ROWS: RowSpec[] = [
   { key: "debris", label: "pasta remaining on the table", unit: "fraction", digits: 2, color: "var(--color-blue)" },
   { key: "dt_ms", label: "gap between frames", unit: "ms", digits: 1, color: "var(--color-amber)" },
   { key: "motion", label: "motion energy", unit: "", digits: 2, color: "var(--color-blue)" },
-  { key: "drift", label: "leader-follower drift", unit: "", digits: 2, color: "var(--color-blue)" },
 ];
 
-/** The four per-episode series stacked on a shared time axis,
+/** The per-episode series stacked on a shared time axis,
  *  with a shared crosshair and per-row readouts. */
 export default function SeriesPanel({ episode, tickMs }: { episode: Episode; tickMs: number }) {
   const [frac, setFrac] = useState<number | null>(null);

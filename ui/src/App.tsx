@@ -6,16 +6,14 @@ import { episodePasses } from "./lib/query";
 import type { Extent } from "./lib/stats";
 import { extentOf } from "./lib/stats";
 import Masthead from "./components/Masthead";
-import TimingSection from "./components/TimingSection";
 import DefectsSection from "./components/DefectsSection";
 import AdjudicationSection from "./components/AdjudicationSection";
 import ExportSection from "./components/ExportSection";
 import EpisodeDetail from "./components/EpisodeDetail";
 
 const NAV = [
-  { id: "timing", label: "01 timing" },
-  { id: "defects", label: "02 defects" },
-  { id: "adjudication", label: "03 adjudication" },
+  { id: "defects", label: "01 defects" },
+  { id: "adjudication", label: "02 adjudication" },
   { id: "export", label: "export" },
 ];
 
@@ -23,8 +21,9 @@ export default function App() {
   const { data, error } = useData();
 
   const [clauses, setClauses] = useState<Clause[]>([
-    { id: 1, metric: "pct_dropped", op: "<", value: 40 },
-    { id: 2, metric: "debris_end", op: "<", value: 0.3 },
+    { id: 1, metric: "debris_end", op: "<", value: 0.15 },
+    { id: 2, metric: "worst_gap_ms", op: "<", value: 500 },
+    { id: 3, metric: "duration_s", op: ">", value: 20 },
   ]);
   const [selected, setSelected] = useState<number | null>(null);
 
@@ -116,7 +115,9 @@ export default function App() {
           <a href="#top" className="display text-sm font-black tracking-tight text-ink uppercase">
             Winnow
           </a>
-          <span className="hidden text-xs text-ink3 sm:inline">a dataset audit, in three findings</span>
+          <span className="hidden text-xs text-ink3 sm:inline">
+            every episode graded from the recording itself
+          </span>
           <nav className="ml-auto flex gap-5 font-mono text-xs" aria-label="sections">
             {NAV.map((n) => (
               <a
@@ -140,8 +141,12 @@ export default function App() {
             heroHz={hero.metrics.true_hz}
           />
         )}
-        <TimingSection summary={s} />
-        <DefectsSection episodes={episodes} medianDuration={medianDuration} onSelect={setSelected} />
+        <DefectsSection
+          episodes={episodes}
+          frameTotal={s.n_frames}
+          medianDuration={medianDuration}
+          onSelect={setSelected}
+        />
         <AdjudicationSection episodes={episodes} onSelect={setSelected} />
         <ExportSection
           episodes={episodes}

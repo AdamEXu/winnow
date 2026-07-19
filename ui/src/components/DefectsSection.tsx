@@ -12,6 +12,7 @@ import Sparkline from "./charts/Sparkline";
 
 interface DefectsSectionProps {
   episodes: Episode[];
+  frameTotal: number;
   medianDuration: number;
   onSelect: (episode: number) => void;
 }
@@ -103,7 +104,7 @@ function Dossier({
             hand label: {e.labelled}
             {labelSaidGood && (
               <span className="ml-1.5 font-medium text-amberdeep">
-                — the label missed this. See Finding 03.
+                — the label missed this. See Finding 02.
               </span>
             )}
           </p>
@@ -113,18 +114,78 @@ function Dossier({
   );
 }
 
-/** Finding 02: nine defective episodes, each with checkable pixel evidence. */
-export default function DefectsSection({ episodes, medianDuration, onSelect }: DefectsSectionProps) {
+/** Finding 01, and the whole point: every episode is machine-graded, and the
+ *  grade is a checkable claim. Exhibit A leads; the other eight follow. */
+export default function DefectsSection({
+  episodes,
+  frameTotal,
+  medianDuration,
+  onSelect,
+}: DefectsSectionProps) {
   const flagged = episodes.filter((e) => e.detections.length > 0);
+  const lead = flagged[0];
+  const rest = flagged.slice(1);
+  const leadMarks = lead ? lead.detections.flatMap((d) => parseEvidenceMarks(d.why)) : [];
+  const leadClaim = lead ? splitWhy(lead.detections[0].why)[0] : "";
+  const leadCoord = leadMarks[0]?.label;
 
   return (
     <section id="defects" className="scroll-mt-24" aria-labelledby="defects-head">
       <FindingHead
-        n="02"
+        n="01"
         topic="Defects"
-        title={`${flagged.length === 9 ? "Nine" : String(flagged.length)} episodes are defective — and here is the pixel evidence for each.`}
-        sub="Four detectors read every episode's own signals and, when one fires, it writes a sentence precise enough to check against the footage. The crosshairs below are the detector's claimed coordinates, plotted on the actual final frame."
+        title={`${flagged.length === 9 ? "Nine" : String(flagged.length)} episodes are defective — and the machine can point to the pixel.`}
+        sub="Four detectors read each episode's own footage and signals. When one fires it does not output a score — it writes a claim you can check against the video: coordinates, frame counts, durations. Every crosshair below is a detector's claim, plotted on the episode's actual final frame."
       />
+
+      {lead && (
+        <div className="mb-10 grid items-center gap-x-10 gap-y-6 lg:grid-cols-[1.15fr_1fr]">
+          <button
+            type="button"
+            onClick={() => onSelect(lead.episode)}
+            aria-label={`open episode ${lead.episode} record`}
+            className="group block w-full self-start text-left"
+          >
+            <EvidencePhoto
+              src={thumbUrl(lead.name, 5)}
+              alt={`Final frame of episode ${lead.episode}, with the detector's claimed coordinates marked`}
+              marks={leadMarks}
+              className="transition-opacity group-hover:opacity-90"
+            />
+            <span className="mt-1.5 block text-[13px] text-ink2">
+              {lead.name}, top camera, final frame &mdash; click to open the full record
+            </span>
+          </button>
+
+          <div>
+            <p className="font-mono text-[11px] tracking-wide text-ink3 uppercase">
+              Exhibit A · episode {lead.episode} ·{" "}
+              {[...new Set(lead.detections.map((d) => d.detector))].map(detectorName).join(", ")}
+            </p>
+            <blockquote className="testimony mt-3 text-2xl leading-snug text-ink md:text-[1.75rem]">
+              &ldquo;{leadClaim}&rdquo;
+            </blockquote>
+            <p className="mt-4 text-sm leading-relaxed text-ink2">
+              That sentence was written by a detector, not a person.
+              {leadCoord && (
+                <>
+                  {" "}
+                  Open the video, look at <span className="font-mono text-ink">{leadCoord}</span>,
+                  and the piece is there &mdash; a reviewer checked.
+                </>
+              )}
+            </p>
+            <p className="mt-4 border-t border-line pt-4 text-sm leading-relaxed text-ink2">
+              For scale: that piece of pasta is roughly{" "}
+              <span className="font-semibold text-ink">20 pixels</span> wide, and the corpus is{" "}
+              <span className="font-semibold text-ink">
+                {frameTotal.toLocaleString("en-US")} frames
+              </span>
+              . No one watches for that. The panel reads every frame of every episode.
+            </p>
+          </div>
+        </div>
+      )}
 
       <dl className="mb-8 grid gap-x-8 gap-y-2 border-y border-line py-3 sm:grid-cols-2 lg:grid-cols-4">
         {Object.entries(DETECTORS).map(([key, d]) => (
@@ -136,7 +197,7 @@ export default function DefectsSection({ episodes, medianDuration, onSelect }: D
       </dl>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {flagged.map((e) => (
+        {rest.map((e) => (
           <Dossier
             key={e.episode}
             e={e}

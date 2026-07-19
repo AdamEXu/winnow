@@ -18,10 +18,17 @@ export default function EvidencePhoto({
   className = "",
   labelled = true,
 }: EvidencePhotoProps) {
+  // Merge marks that sit on the same piece — labels would overprint.
+  const shown: EvidenceMark[] = [];
+  for (const m of marks) {
+    if (shown.some((s) => Math.hypot(s.fx - m.fx, s.fy - m.fy) < 0.035)) continue;
+    shown.push(m);
+  }
+
   return (
     <div className={`relative overflow-hidden bg-ink ${className}`}>
-      <img src={src} alt={alt} loading="lazy" className="evidence block aspect-[200/113] w-full object-cover" />
-      {marks.map((m) => {
+      <img src={src} alt={alt} className="evidence block aspect-[200/113] w-full object-cover" />
+      {shown.map((m) => {
         const left = `${(m.fx * 100).toFixed(2)}%`;
         const top = `${(m.fy * 100).toFixed(2)}%`;
         const flipX = m.fx > 0.68;

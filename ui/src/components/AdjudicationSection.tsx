@@ -69,14 +69,14 @@ function Case({ e, onSelect }: { e: Episode; onSelect: () => void }) {
   );
 }
 
-/** Finding 03: every human-vs-machine disagreement, re-watched and ruled on. */
+/** Finding 02: every human-vs-machine disagreement, re-watched and ruled on. */
 export default function AdjudicationSection({ episodes, onSelect }: AdjudicationSectionProps) {
   const cases = episodes.filter((e) => e.adjudicated !== null);
 
   return (
     <section id="adjudication" className="scroll-mt-24" aria-labelledby="adjudication-head">
       <FindingHead
-        n="03"
+        n="02"
         topic="Disagreements"
         title="Where the labels and the panel disagreed, the panel went three for three."
         sub={`On ${cases.length} episodes the hand label and the detector panel contradicted each other. A reviewer re-watched each one and ruled. The score:`}

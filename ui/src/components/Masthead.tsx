@@ -11,26 +11,18 @@ interface MastheadProps {
 
 const STAGES = ["scattered", "approach", "sweep", "sweep", "dump", "table clear"];
 
-/** Who, what, and where to start — before any chart. */
+/** Who, what, and where to start — before anything else. */
 export default function Masthead({ summary, heroName, heroPicks, heroHz }: MastheadProps) {
-  const drift = summary.wall_clock_min - summary.video_min_at_claimed;
-
   const contents = [
     {
-      href: "#timing",
-      n: "01",
-      title: "The metadata is lying about time",
-      sub: `${summary.claimed_fps.toFixed(0)} fps claimed, ${summary.measured_hz.toFixed(2)} Hz measured — ${drift.toFixed(1)} min of video does not exist`,
-    },
-    {
       href: "#defects",
-      n: "02",
+      n: "01",
       title: "Nine episodes are defective",
-      sub: "each verdict comes with pixel coordinates you can check against the frame",
+      sub: "each verdict is a checkable claim — pixel coordinates, frame counts — not a score",
     },
     {
       href: "#adjudication",
-      n: "03",
+      n: "02",
       title: "Machine vs. hand labels: 3–0",
       sub: "every disagreement, on review of the footage, went to the machine",
     },
@@ -51,14 +43,14 @@ export default function Masthead({ summary, heroName, heroPicks, heroHz }: Masth
         <div>
           <p className="lede text-2xl leading-snug text-ink md:text-[1.7rem]">
             A two-arm robot sweeps pasta into a dustpan and tips it into a basket. Fifty-eight
-            demonstrations were recorded as training data. winnow audited the recording itself
-            &mdash; timestamps and pixels, nothing taken from the metadata on trust &mdash; and
-            filed three findings.
+            demonstrations were recorded as training data, each hand-labelled good or bad. winnow
+            graded them all again &mdash; by machine, from the footage and signals themselves
+            &mdash; and caught defects the hand labels had passed.
           </p>
           <p className="mt-5 text-sm leading-relaxed text-ink2">
-            Read the findings in order, then use the query at the end &mdash; it is the same WHERE
-            clause the export pipeline runs. Click any episode anywhere on this page to open its
-            full record.
+            Start with the evidence in Finding 01, then use the query at the end &mdash; it is the
+            same WHERE clause the export pipeline runs. Click any episode anywhere on this page to
+            open its full record.
           </p>
         </div>
 
