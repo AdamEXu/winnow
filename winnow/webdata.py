@@ -94,9 +94,7 @@ def build():
         records.append({
             "episode": episode,
             "name": name,
-            "warmup": episode in detect.WARMUP,
-            "labelled": ("good" if episode in LABELLED_GOOD
-                         else "batch" if episode in detect.WARMUP else "bad"),
+            "labelled": "good" if episode in LABELLED_GOOD else "bad",
             "metrics": {k: (None if v is None else float(v)) for k, v in row.items()},
             "features": feat,
             "detections": fired.get(episode, []),

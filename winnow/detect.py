@@ -2,13 +2,13 @@
 
 Each detector answers one concrete question about a recording and explains itself
 in a sentence a person can check against the video. Thresholds come from the
-shape of the corpus, the modal gripper sequence or a median-absolute-deviation
+shape of the corpus, from rig geometry or from a median-absolute-deviation
 score, never from the human labels. The labels are used once, at the end, to
 report how well the panel agrees.
 
-Episodes 0-6 are an early batch recorded with the wrong action and speed
-settings. They are a known-bad batch rather than six defects to rediscover, so
-they are excluded from scoring.
+Episodes 0-6 were an early batch recorded with the wrong action and speed
+settings. They were a known-bad batch rather than seven defects to rediscover,
+and have since been dropped from the corpus entirely.
 """
 import json
 import os
@@ -18,7 +18,6 @@ import numpy as np
 import paths
 from features import load
 
-WARMUP = set(range(7))
 LABELLED_BAD = {11, 14, 22, 24, 27, 32, 40, 41}
 
 
@@ -82,7 +81,7 @@ def panel(table, stray=None):
 
 def evaluate():
     features = load()
-    episodes = [e for e in paths.episodes() if e not in WARMUP]
+    episodes = paths.episodes()
     keys = [k for k, v in features[f"episode_{episodes[0]:04d}"].items()
             if isinstance(v, (int, float))]
     table = {k: np.array([features[f"episode_{e:04d}"][k] for e in episodes], dtype=float)

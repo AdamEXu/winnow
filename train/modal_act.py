@@ -110,6 +110,10 @@ def convert():
     return str(DATASET)
 
 
+# GPU and CPU are overridden per call via .with_options(), because the useful
+# question is not which GPU is biggest but whether the dataloader can keep any
+# GPU fed. Compare dataloading_s against update_s in the first log lines: if
+# they are close, buy cores rather than a bigger card.
 @app.function(image=image, gpu="A10", cpu=8, memory=32768, timeout=8 * 60 * 60,
               volumes={VOLUME: volume})
 def train(steps: int = 25_000, batch_size: int = 8, num_workers: int = 8,
@@ -143,12 +147,18 @@ def train(steps: int = 25_000, batch_size: int = 8, num_workers: int = 8,
 
 
 @app.local_entrypoint()
-def main(step: str = "convert", steps: int = 30_000, batch_size: int = 8,
-         num_workers: int = 8, run_name: str = "act-sweep"):
+def main(step: str = "convert", steps: int = 25_000, batch_size: int = 8,
+         gpu: str = "A10", cpu: int = 8, num_workers: int = 0,
+         run_name: str = "act-sweep"):
+    """--step convert | train, with the hardware chosen at call time."""
     if step == "convert":
         print(convert.remote())
-    elif step == "train":
-        print(train.remote(steps=steps, batch_size=batch_size,
-                           num_workers=num_workers, run_name=run_name))
-    else:
+        return
+    if step != "train":
         raise SystemExit("--step must be convert or train")
+
+    workers = num_workers or cpu
+    sized = train.with_options(gpu=gpu, cpu=cpu, memory=max(32768, cpu * 4096))
+    print(f"{gpu}, {cpu} cores, {workers} workers, {steps} steps, batch {batch_size}")
+    print(sized.remote(steps=steps, batch_size=batch_size,
+                       num_workers=workers, run_name=run_name))

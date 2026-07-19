@@ -77,7 +77,7 @@ choose and lets latest-at fill the rest, which turns an irregular capture into a
 uniform one:
 
 ```
-before  dt 66.7-133.6 ms, sd 33.2 ms, 9.72 Hz actual against 15 fps claimed
+before  dt 66.7-133.7 ms, sd 31.7 ms, 11.13 Hz actual against 15 fps claimed
 after   dt 100.0-100.0 ms, sd  0.0 ms
 ```
 

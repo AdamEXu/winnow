@@ -5,10 +5,10 @@ That list is one bit per episode and does not say why. This document is about
 deriving signals that do say why, and about being honest regarding how far they
 go.
 
-Episodes 0-6 are excluded throughout. They are an early batch recorded with the
-wrong action and speed settings, so they are a known-bad *batch* rather than
-seven defects to rediscover. That leaves 58 episodes, of which the teammate
-flagged eight: 11, 14, 22, 24, 27, 32, 40 and 41.
+Episodes 0-6 have been dropped from the corpus. They were an early batch
+recorded with the wrong action and speed settings, so they were a known-bad
+*batch* rather than seven defects to rediscover. That leaves 58 episodes, of
+which the teammate flagged eight: 11, 14, 22, 24, 27, 32, 40 and 41.
 
 ## The panel
 
