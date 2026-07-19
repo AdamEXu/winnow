@@ -26,7 +26,15 @@ export default function DriftBar({ summary }: { summary: Summary }) {
         {label}
       </text>
       <rect x={LABEL_W} y={y} width={w} height={BAR_H} rx={4} fill={color} />
-      <text x={LABEL_W + w + 12} y={y + BAR_H / 2 + 4.5} fill="var(--color-ink)" fontSize={14} fontFamily="var(--font-mono)" fontWeight={600}>
+      <text
+        x={LABEL_W + w - 10}
+        y={y + BAR_H / 2 + 4.5}
+        textAnchor="end"
+        fill="var(--color-bg)"
+        fontSize={13}
+        fontFamily="var(--font-mono)"
+        fontWeight={600}
+      >
         {minutes.toFixed(1)} min
       </text>
     </g>

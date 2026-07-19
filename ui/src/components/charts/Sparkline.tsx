@@ -8,7 +8,7 @@ interface SparklineProps {
   className?: string;
 }
 
-export function sparklinePoints(
+function sparklinePoints(
   values: number[],
   width: number,
   height: number,

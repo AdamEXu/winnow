@@ -121,9 +121,9 @@ export default function GapHistogram({ summary }: { summary: Summary }) {
         {[mode1, mode2].map((i) => (
           <text
             key={i}
-            x={xOf((edges[i] + edges[i + 1]) / 2)}
-            y={yOf(counts[i]) - 8}
-            textAnchor="middle"
+            x={xOf(edges[i + 1]) + 8}
+            y={yOf(counts[i]) + 12}
+            textAnchor="start"
             fill="var(--color-ink)"
             fontSize={13}
             fontFamily="var(--font-mono)"
