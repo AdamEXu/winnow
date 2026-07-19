@@ -1,0 +1,123 @@
+{
+ "episode_0007": [],
+ "episode_0008": [],
+ "episode_0009": [],
+ "episode_0010": [],
+ "episode_0011": [],
+ "episode_0012": [],
+ "episode_0013": [],
+ "episode_0014": [
+  {
+   "detector": "incomplete_sequence",
+   "why": "the right gripper cycled 6 times; a complete demonstration cycles it 8, so a phase of the task is missing"
+  }
+ ],
+ "episode_0015": [],
+ "episode_0016": [
+  {
+   "detector": "incomplete_sequence",
+   "why": "the right gripper cycled 6 times; a complete demonstration cycles it 8, so a phase of the task is missing"
+  }
+ ],
+ "episode_0017": [],
+ "episode_0018": [],
+ "episode_0019": [],
+ "episode_0020": [],
+ "episode_0021": [],
+ "episode_0022": [
+  {
+   "detector": "incomplete_sequence",
+   "why": "the right gripper cycled 6 times; a complete demonstration cycles it 8, so a phase of the task is missing"
+  }
+ ],
+ "episode_0023": [],
+ "episode_0024": [
+  {
+   "detector": "incomplete_sequence",
+   "why": "the right gripper cycled 4 times; a complete demonstration cycles it 8, so a phase of the task is missing"
+  }
+ ],
+ "episode_0025": [],
+ "episode_0026": [],
+ "episode_0027": [
+  {
+   "detector": "incomplete_sequence",
+   "why": "the right gripper cycled 4 times; a complete demonstration cycles it 8, so a phase of the task is missing"
+  },
+  {
+   "detector": "task_not_completed",
+   "why": "122% of the debris was still on the table when the episode ended"
+  },
+  {
+   "detector": "truncated",
+   "why": "only 12 seconds, far shorter than any complete demonstration"
+  }
+ ],
+ "episode_0028": [],
+ "episode_0029": [],
+ "episode_0030": [],
+ "episode_0031": [
+  {
+   "detector": "incomplete_sequence",
+   "why": "the right gripper cycled 6 times; a complete demonstration cycles it 8, so a phase of the task is missing"
+  }
+ ],
+ "episode_0032": [],
+ "episode_0033": [
+  {
+   "detector": "incomplete_sequence",
+   "why": "the right gripper cycled 4 times; a complete demonstration cycles it 8, so a phase of the task is missing"
+  }
+ ],
+ "episode_0034": [],
+ "episode_0035": [],
+ "episode_0036": [],
+ "episode_0037": [],
+ "episode_0038": [],
+ "episode_0039": [],
+ "episode_0040": [],
+ "episode_0041": [
+  {
+   "detector": "incomplete_sequence",
+   "why": "the right gripper cycled 6 times; a complete demonstration cycles it 8, so a phase of the task is missing"
+  }
+ ],
+ "episode_0042": [],
+ "episode_0043": [],
+ "episode_0044": [],
+ "episode_0045": [],
+ "episode_0046": [],
+ "episode_0047": [],
+ "episode_0048": [
+  {
+   "detector": "capture_stall",
+   "why": "a 1211 ms gap with no data recorded at all"
+  }
+ ],
+ "episode_0049": [],
+ "episode_0050": [],
+ "episode_0051": [],
+ "episode_0052": [],
+ "episode_0053": [
+  {
+   "detector": "incomplete_sequence",
+   "why": "the right gripper cycled 6 times; a complete demonstration cycles it 8, so a phase of the task is missing"
+  }
+ ],
+ "episode_0054": [],
+ "episode_0055": [],
+ "episode_0056": [],
+ "episode_0057": [],
+ "episode_0058": [],
+ "episode_0059": [],
+ "episode_0060": [],
+ "episode_0061": [],
+ "episode_0062": [],
+ "episode_0063": [
+  {
+   "detector": "incomplete_sequence",
+   "why": "the right gripper cycled 6 times; a complete demonstration cycles it 8, so a phase of the task is missing"
+  }
+ ],
+ "episode_0064": []
+}
