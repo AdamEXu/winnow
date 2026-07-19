@@ -1,0 +1,1057 @@
+{
+ "episode_0000": {
+  "episode": 0,
+  "n_frames": 554,
+  "basket": [
+   307,
+   61,
+   104,
+   89
+  ],
+  "score": 0.0,
+  "defects": [],
+  "defective": false
+ },
+ "episode_0001": {
+  "episode": 1,
+  "n_frames": 628,
+  "basket": [
+   302,
+   55,
+   107,
+   90
+  ],
+  "score": 1.16,
+  "defects": [
+   {
+    "type": "table_stray",
+    "x": 199.3,
+    "y": 25.3,
+    "first": 468,
+    "last": 497,
+    "obs": 30,
+    "bbox": [
+     195,
+     22,
+     10,
+     7
+    ],
+    "visible_at_end": false
+   }
+  ],
+  "defective": true
+ },
+ "episode_0002": {
+  "episode": 2,
+  "n_frames": 566,
+  "basket": [
+   301,
+   53,
+   105,
+   88
+  ],
+  "score": 0.0,
+  "defects": [],
+  "defective": false
+ },
+ "episode_0003": {
+  "episode": 3,
+  "n_frames": 664,
+  "basket": [
+   298,
+   55,
+   109,
+   85
+  ],
+  "score": 0.0,
+  "defects": [],
+  "defective": false
+ },
+ "episode_0004": {
+  "episode": 4,
+  "n_frames": 520,
+  "basket": [
+   301,
+   58,
+   106,
+   84
+  ],
+  "score": 0.0,
+  "defects": [],
+  "defective": false
+ },
+ "episode_0005": {
+  "episode": 5,
+  "n_frames": 599,
+  "basket": [
+   299,
+   54,
+   105,
+   86
+  ],
+  "score": 0.0,
+  "defects": [],
+  "defective": false
+ },
+ "episode_0006": {
+  "episode": 6,
+  "n_frames": 524,
+  "basket": [
+   310,
+   56,
+   99,
+   88
+  ],
+  "score": 0.0,
+  "defects": [],
+  "defective": false
+ },
+ "episode_0007": {
+  "episode": 7,
+  "n_frames": 547,
+  "basket": [
+   307,
+   58,
+   106,
+   86
+  ],
+  "score": 0.05,
+  "defects": [],
+  "defective": false
+ },
+ "episode_0008": {
+  "episode": 8,
+  "n_frames": 543,
+  "basket": [
+   309,
+   61,
+   102,
+   87
+  ],
+  "score": 0.0,
+  "defects": [],
+  "defective": false
+ },
+ "episode_0009": {
+  "episode": 9,
+  "n_frames": 564,
+  "basket": [
+   309,
+   64,
+   107,
+   84
+  ],
+  "score": 0.05,
+  "defects": [],
+  "defective": false
+ },
+ "episode_0010": {
+  "episode": 10,
+  "n_frames": 624,
+  "basket": [
+   302,
+   58,
+   100,
+   85
+  ],
+  "score": 0.05,
+  "defects": [],
+  "defective": false
+ },
+ "episode_0011": {
+  "episode": 11,
+  "n_frames": 613,
+  "basket": [
+   300,
+   61,
+   106,
+   82
+  ],
+  "score": 1.5,
+  "defects": [
+   {
+    "type": "pan_residue",
+    "x": 257.7,
+    "y": 51.2,
+    "bbox": [
+     252,
+     47,
+     11,
+     10
+    ],
+    "hits": 30,
+    "of": 30
+   }
+  ],
+  "defective": true
+ },
+ "episode_0012": {
+  "episode": 12,
+  "n_frames": 666,
+  "basket": [
+   304,
+   55,
+   106,
+   86
+  ],
+  "score": 0.0,
+  "defects": [],
+  "defective": false
+ },
+ "episode_0013": {
+  "episode": 13,
+  "n_frames": 672,
+  "basket": [
+   298,
+   56,
+   104,
+   86
+  ],
+  "score": 0.0,
+  "defects": [],
+  "defective": false
+ },
+ "episode_0014": {
+  "episode": 14,
+  "n_frames": 610,
+  "basket": [
+   308,
+   60,
+   96,
+   87
+  ],
+  "score": 1.4,
+  "defects": [
+   {
+    "type": "table_stray",
+    "x": 195.1,
+    "y": 55.8,
+    "first": 504,
+    "last": 530,
+    "obs": 27,
+    "bbox": [
+     191,
+     51,
+     10,
+     10
+    ],
+    "visible_at_end": false
+   },
+   {
+    "type": "table_stray",
+    "x": 195.3,
+    "y": 55.9,
+    "first": 552,
+    "last": 587,
+    "obs": 29,
+    "bbox": [
+     191,
+     51,
+     10,
+     10
+    ],
+    "visible_at_end": false
+   }
+  ],
+  "defective": true
+ },
+ "episode_0015": {
+  "episode": 15,
+  "n_frames": 555,
+  "basket": [
+   298,
+   58,
+   105,
+   83
+  ],
+  "score": 0.0,
+  "defects": [],
+  "defective": false
+ },
+ "episode_0016": {
+  "episode": 16,
+  "n_frames": 491,
+  "basket": [
+   302,
+   61,
+   107,
+   83
+  ],
+  "score": 0.0,
+  "defects": [],
+  "defective": false
+ },
+ "episode_0017": {
+  "episode": 17,
+  "n_frames": 502,
+  "basket": [
+   297,
+   61,
+   106,
+   84
+  ],
+  "score": 0.0,
+  "defects": [],
+  "defective": false
+ },
+ "episode_0018": {
+  "episode": 18,
+  "n_frames": 562,
+  "basket": [
+   299,
+   62,
+   104,
+   84
+  ],
+  "score": 0.0,
+  "defects": [],
+  "defective": false
+ },
+ "episode_0019": {
+  "episode": 19,
+  "n_frames": 561,
+  "basket": [
+   301,
+   62,
+   107,
+   83
+  ],
+  "score": 0.0,
+  "defects": [],
+  "defective": false
+ },
+ "episode_0020": {
+  "episode": 20,
+  "n_frames": 542,
+  "basket": [
+   303,
+   62,
+   106,
+   85
+  ],
+  "score": 0.4,
+  "defects": [],
+  "defective": false
+ },
+ "episode_0021": {
+  "episode": 21,
+  "n_frames": 525,
+  "basket": [
+   305,
+   57,
+   102,
+   84
+  ],
+  "score": 4.28,
+  "defects": [
+   {
+    "type": "table_stray",
+    "x": 233.5,
+    "y": 78.9,
+    "first": 358,
+    "last": 465,
+    "obs": 92,
+    "bbox": [
+     229,
+     75,
+     10,
+     10
+    ],
+    "visible_at_end": false
+   },
+   {
+    "type": "table_stray",
+    "x": 234.9,
+    "y": 78.5,
+    "first": 492,
+    "last": 524,
+    "obs": 33,
+    "bbox": [
+     231,
+     73,
+     10,
+     12
+    ],
+    "visible_at_end": true
+   }
+  ],
+  "defective": true
+ },
+ "episode_0022": {
+  "episode": 22,
+  "n_frames": 455,
+  "basket": [
+   302,
+   61,
+   103,
+   85
+  ],
+  "score": 0.25,
+  "defects": [],
+  "defective": false
+ },
+ "episode_0023": {
+  "episode": 23,
+  "n_frames": 472,
+  "basket": [
+   309,
+   61,
+   102,
+   84
+  ],
+  "score": 0.0,
+  "defects": [],
+  "defective": false
+ },
+ "episode_0024": {
+  "episode": 24,
+  "n_frames": 333,
+  "basket": [
+   294,
+   60,
+   105,
+   84
+  ],
+  "score": 1.76,
+  "defects": [
+   {
+    "type": "table_stray",
+    "x": 199.3,
+    "y": 103.0,
+    "first": 288,
+    "last": 332,
+    "obs": 45,
+    "bbox": [
+     195,
+     97,
+     10,
+     12
+    ],
+    "visible_at_end": true
+   },
+   {
+    "type": "pan_residue",
+    "x": 206.4,
+    "y": 57.5,
+    "bbox": [
+     197,
+     48,
+     17,
+     19
+    ],
+    "hits": 23,
+    "of": 30
+   },
+   {
+    "type": "pan_residue",
+    "x": 218.5,
+    "y": 72.4,
+    "bbox": [
+     211,
+     63,
+     16,
+     21
+    ],
+    "hits": 30,
+    "of": 30
+   },
+   {
+    "type": "pan_residue",
+    "x": 204.5,
+    "y": 83.8,
+    "bbox": [
+     199,
+     80,
+     12,
+     10
+    ],
+    "hits": 28,
+    "of": 30
+   }
+  ],
+  "defective": true
+ },
+ "episode_0025": {
+  "episode": 25,
+  "n_frames": 470,
+  "basket": [
+   310,
+   61,
+   101,
+   85
+  ],
+  "score": 0.0,
+  "defects": [],
+  "defective": false
+ },
+ "episode_0026": {
+  "episode": 26,
+  "n_frames": 478,
+  "basket": [
+   308,
+   57,
+   99,
+   84
+  ],
+  "score": 0.5,
+  "defects": [],
+  "defective": false
+ },
+ "episode_0027": {
+  "episode": 27,
+  "n_frames": 138,
+  "basket": [
+   308,
+   59,
+   97,
+   85
+  ],
+  "score": 0.0,
+  "defects": [],
+  "defective": false
+ },
+ "episode_0028": {
+  "episode": 28,
+  "n_frames": 406,
+  "basket": [
+   302,
+   59,
+   103,
+   85
+  ],
+  "score": 0.0,
+  "defects": [],
+  "defective": false
+ },
+ "episode_0029": {
+  "episode": 29,
+  "n_frames": 406,
+  "basket": [
+   294,
+   54,
+   103,
+   85
+  ],
+  "score": 0.0,
+  "defects": [],
+  "defective": false
+ },
+ "episode_0030": {
+  "episode": 30,
+  "n_frames": 434,
+  "basket": [
+   301,
+   54,
+   102,
+   85
+  ],
+  "score": 0.0,
+  "defects": [],
+  "defective": false
+ },
+ "episode_0031": {
+  "episode": 31,
+  "n_frames": 465,
+  "basket": [
+   301,
+   58,
+   103,
+   84
+  ],
+  "score": 0.0,
+  "defects": [],
+  "defective": false
+ },
+ "episode_0032": {
+  "episode": 32,
+  "n_frames": 444,
+  "basket": [
+   305,
+   58,
+   106,
+   82
+  ],
+  "score": 7.84,
+  "defects": [
+   {
+    "type": "table_stray",
+    "x": 192.9,
+    "y": 61.0,
+    "first": 247,
+    "last": 443,
+    "obs": 194,
+    "bbox": [
+     188,
+     57,
+     11,
+     8
+    ],
+    "visible_at_end": true
+   }
+  ],
+  "defective": true
+ },
+ "episode_0033": {
+  "episode": 33,
+  "n_frames": 505,
+  "basket": [
+   305,
+   64,
+   107,
+   83
+  ],
+  "score": 0.0,
+  "defects": [],
+  "defective": false
+ },
+ "episode_0034": {
+  "episode": 34,
+  "n_frames": 482,
+  "basket": [
+   303,
+   58,
+   107,
+   83
+  ],
+  "score": 0.0,
+  "defects": [],
+  "defective": false
+ },
+ "episode_0035": {
+  "episode": 35,
+  "n_frames": 402,
+  "basket": [
+   301,
+   57,
+   106,
+   83
+  ],
+  "score": 0.05,
+  "defects": [],
+  "defective": false
+ },
+ "episode_0036": {
+  "episode": 36,
+  "n_frames": 509,
+  "basket": [
+   302,
+   62,
+   104,
+   84
+  ],
+  "score": 0.3,
+  "defects": [],
+  "defective": false
+ },
+ "episode_0037": {
+  "episode": 37,
+  "n_frames": 471,
+  "basket": [
+   302,
+   58,
+   101,
+   85
+  ],
+  "score": 0.05,
+  "defects": [],
+  "defective": false
+ },
+ "episode_0038": {
+  "episode": 38,
+  "n_frames": 523,
+  "basket": [
+   302,
+   56,
+   107,
+   84
+  ],
+  "score": 0.0,
+  "defects": [],
+  "defective": false
+ },
+ "episode_0039": {
+  "episode": 39,
+  "n_frames": 466,
+  "basket": [
+   310,
+   59,
+   102,
+   85
+  ],
+  "score": 0.0,
+  "defects": [],
+  "defective": false
+ },
+ "episode_0040": {
+  "episode": 40,
+  "n_frames": 503,
+  "basket": [
+   300,
+   59,
+   105,
+   83
+  ],
+  "score": 3.2,
+  "defects": [
+   {
+    "type": "table_stray",
+    "x": 265.4,
+    "y": 43.0,
+    "first": 322,
+    "last": 402,
+    "obs": 79,
+    "bbox": [
+     261,
+     39,
+     10,
+     9
+    ],
+    "visible_at_end": false
+   }
+  ],
+  "defective": true
+ },
+ "episode_0041": {
+  "episode": 41,
+  "n_frames": 499,
+  "basket": [
+   296,
+   58,
+   106,
+   83
+  ],
+  "score": 3.0,
+  "defects": [
+   {
+    "type": "table_stray",
+    "x": 226.7,
+    "y": 95.9,
+    "first": 332,
+    "last": 407,
+    "obs": 61,
+    "bbox": [
+     223,
+     89,
+     10,
+     14
+    ],
+    "visible_at_end": false
+   },
+   {
+    "type": "table_stray",
+    "x": 226.2,
+    "y": 97.6,
+    "first": 419,
+    "last": 464,
+    "obs": 45,
+    "bbox": [
+     223,
+     93,
+     8,
+     10
+    ],
+    "visible_at_end": false
+   }
+  ],
+  "defective": true
+ },
+ "episode_0042": {
+  "episode": 42,
+  "n_frames": 473,
+  "basket": [
+   296,
+   59,
+   105,
+   83
+  ],
+  "score": 0.0,
+  "defects": [],
+  "defective": false
+ },
+ "episode_0043": {
+  "episode": 43,
+  "n_frames": 500,
+  "basket": [
+   296,
+   63,
+   107,
+   84
+  ],
+  "score": 0.0,
+  "defects": [],
+  "defective": false
+ },
+ "episode_0044": {
+  "episode": 44,
+  "n_frames": 553,
+  "basket": [
+   299,
+   57,
+   105,
+   84
+  ],
+  "score": 0.0,
+  "defects": [],
+  "defective": false
+ },
+ "episode_0045": {
+  "episode": 45,
+  "n_frames": 503,
+  "basket": [
+   298,
+   65,
+   102,
+   83
+  ],
+  "score": 0.0,
+  "defects": [],
+  "defective": false
+ },
+ "episode_0046": {
+  "episode": 46,
+  "n_frames": 456,
+  "basket": [
+   305,
+   59,
+   106,
+   85
+  ],
+  "score": 0.0,
+  "defects": [],
+  "defective": false
+ },
+ "episode_0047": {
+  "episode": 47,
+  "n_frames": 435,
+  "basket": [
+   298,
+   58,
+   105,
+   82
+  ],
+  "score": 0.0,
+  "defects": [],
+  "defective": false
+ },
+ "episode_0048": {
+  "episode": 48,
+  "n_frames": 501,
+  "basket": [
+   301,
+   57,
+   105,
+   83
+  ],
+  "score": 0.0,
+  "defects": [],
+  "defective": false
+ },
+ "episode_0049": {
+  "episode": 49,
+  "n_frames": 464,
+  "basket": [
+   300,
+   58,
+   103,
+   86
+  ],
+  "score": 0.05,
+  "defects": [],
+  "defective": false
+ },
+ "episode_0050": {
+  "episode": 50,
+  "n_frames": 445,
+  "basket": [
+   303,
+   54,
+   103,
+   86
+  ],
+  "score": 0.0,
+  "defects": [],
+  "defective": false
+ },
+ "episode_0051": {
+  "episode": 51,
+  "n_frames": 474,
+  "basket": [
+   302,
+   61,
+   105,
+   85
+  ],
+  "score": 0.35,
+  "defects": [],
+  "defective": false
+ },
+ "episode_0052": {
+  "episode": 52,
+  "n_frames": 428,
+  "basket": [
+   313,
+   56,
+   98,
+   88
+  ],
+  "score": 0.0,
+  "defects": [],
+  "defective": false
+ },
+ "episode_0053": {
+  "episode": 53,
+  "n_frames": 487,
+  "basket": [
+   312,
+   58,
+   99,
+   88
+  ],
+  "score": 0.0,
+  "defects": [],
+  "defective": false
+ },
+ "episode_0054": {
+  "episode": 54,
+  "n_frames": 442,
+  "basket": [
+   303,
+   55,
+   104,
+   89
+  ],
+  "score": 0.0,
+  "defects": [],
+  "defective": false
+ },
+ "episode_0055": {
+  "episode": 55,
+  "n_frames": 418,
+  "basket": [
+   309,
+   59,
+   97,
+   88
+  ],
+  "score": 0.08,
+  "defects": [],
+  "defective": false
+ },
+ "episode_0056": {
+  "episode": 56,
+  "n_frames": 480,
+  "basket": [
+   309,
+   56,
+   98,
+   88
+  ],
+  "score": 0.0,
+  "defects": [],
+  "defective": false
+ },
+ "episode_0057": {
+  "episode": 57,
+  "n_frames": 427,
+  "basket": [
+   305,
+   60,
+   99,
+   88
+  ],
+  "score": 0.0,
+  "defects": [],
+  "defective": false
+ },
+ "episode_0058": {
+  "episode": 58,
+  "n_frames": 462,
+  "basket": [
+   299,
+   52,
+   103,
+   87
+  ],
+  "score": 0.0,
+  "defects": [],
+  "defective": false
+ },
+ "episode_0059": {
+  "episode": 59,
+  "n_frames": 477,
+  "basket": [
+   307,
+   51,
+   100,
+   88
+  ],
+  "score": 0.0,
+  "defects": [],
+  "defective": false
+ },
+ "episode_0060": {
+  "episode": 60,
+  "n_frames": 479,
+  "basket": [
+   300,
+   59,
+   104,
+   85
+  ],
+  "score": 0.55,
+  "defects": [],
+  "defective": false
+ },
+ "episode_0061": {
+  "episode": 61,
+  "n_frames": 428,
+  "basket": [
+   298,
+   55,
+   101,
+   85
+  ],
+  "score": 0.0,
+  "defects": [],
+  "defective": false
+ },
+ "episode_0062": {
+  "episode": 62,
+  "n_frames": 526,
+  "basket": [
+   299,
+   58,
+   105,
+   82
+  ],
+  "score": 0.1,
+  "defects": [],
+  "defective": false
+ },
+ "episode_0063": {
+  "episode": 63,
+  "n_frames": 460,
+  "basket": [
+   300,
+   56,
+   106,
+   84
+  ],
+  "score": 0.15,
+  "defects": [],
+  "defective": false
+ },
+ "episode_0064": {
+  "episode": 64,
+  "n_frames": 463,
+  "basket": [
+   301,
+   59,
+   104,
+   85
+  ],
+  "score": 0.0,
+  "defects": [],
+  "defective": false
+ }
+}

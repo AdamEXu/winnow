@@ -3,13 +3,22 @@
  "episode_0008": [],
  "episode_0009": [],
  "episode_0010": [],
- "episode_0011": [],
+ "episode_0011": [
+  {
+   "detector": "debris_outside_basket",
+   "why": "a piece was still sitting in the dustpan at (258, 51) in the top view for 30 of the last 30 frames, never dumped"
+  }
+ ],
  "episode_0012": [],
  "episode_0013": [],
  "episode_0014": [
   {
    "detector": "incomplete_sequence",
    "why": "the right gripper cycled 6 times; a complete demonstration cycles it 8, so a phase of the task is missing"
+  },
+  {
+   "detector": "debris_outside_basket",
+   "why": "a piece was left on the table at (195, 56) in the top view, held still for 27 frames and last seen before an arm parked over it; a piece was left on the table at (195, 56) in the top view, held still for 29 frames and last seen before an arm parked over it"
   }
  ],
  "episode_0015": [],
@@ -23,7 +32,12 @@
  "episode_0018": [],
  "episode_0019": [],
  "episode_0020": [],
- "episode_0021": [],
+ "episode_0021": [
+  {
+   "detector": "debris_outside_basket",
+   "why": "a piece was left on the table at (234, 79) in the top view, held still for 92 frames and last seen before an arm parked over it; a piece was left on the table at (235, 78) in the top view, held still for 33 frames and still visible in the final frame"
+  }
+ ],
  "episode_0022": [
   {
    "detector": "incomplete_sequence",
@@ -35,6 +49,10 @@
   {
    "detector": "incomplete_sequence",
    "why": "the right gripper cycled 4 times; a complete demonstration cycles it 8, so a phase of the task is missing"
+  },
+  {
+   "detector": "debris_outside_basket",
+   "why": "a piece was left on the table at (199, 103) in the top view, held still for 45 frames and still visible in the final frame; a piece was still sitting in the dustpan at (206, 58) in the top view for 23 of the last 30 frames, never dumped; a piece was still sitting in the dustpan at (218, 72) in the top view for 30 of the last 30 frames, never dumped; a piece was still sitting in the dustpan at (204, 84) in the top view for 28 of the last 30 frames, never dumped"
   }
  ],
  "episode_0025": [],
@@ -62,7 +80,12 @@
    "why": "the right gripper cycled 6 times; a complete demonstration cycles it 8, so a phase of the task is missing"
   }
  ],
- "episode_0032": [],
+ "episode_0032": [
+  {
+   "detector": "debris_outside_basket",
+   "why": "a piece was left on the table at (193, 61) in the top view, held still for 194 frames and still visible in the final frame"
+  }
+ ],
  "episode_0033": [
   {
    "detector": "incomplete_sequence",
@@ -75,11 +98,20 @@
  "episode_0037": [],
  "episode_0038": [],
  "episode_0039": [],
- "episode_0040": [],
+ "episode_0040": [
+  {
+   "detector": "debris_outside_basket",
+   "why": "a piece was left on the table at (265, 43) in the top view, held still for 79 frames and last seen before an arm parked over it"
+  }
+ ],
  "episode_0041": [
   {
    "detector": "incomplete_sequence",
    "why": "the right gripper cycled 6 times; a complete demonstration cycles it 8, so a phase of the task is missing"
+  },
+  {
+   "detector": "debris_outside_basket",
+   "why": "a piece was left on the table at (227, 96) in the top view, held still for 61 frames and last seen before an arm parked over it; a piece was left on the table at (226, 98) in the top view, held still for 45 frames and last seen before an arm parked over it"
   }
  ],
  "episode_0042": [],

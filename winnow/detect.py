@@ -30,6 +30,22 @@ def robust_z(values):
     return (values - median) / (spread if spread > 1e-9 else 1.0)
 
 
+def describe_stray(record):
+    """Say where the debris ended up, and for how long it sat there."""
+    parts = []
+    for defect in record["defects"]:
+        where = f"at ({defect['x']:.0f}, {defect['y']:.0f}) in the top view"
+        if defect["type"] == "table_stray":
+            seen = "still visible in the final frame" if defect.get("visible_at_end") \
+                else "last seen before an arm parked over it"
+            parts.append(f"a piece was left on the table {where}, held still for "
+                         f"{defect['obs']} frames and {seen}")
+        else:
+            parts.append(f"a piece was still sitting in the dustpan {where} for "
+                         f"{defect['hits']} of the last {defect['of']} frames, never dumped")
+    return "; ".join(parts) or "debris ended up outside the basket"
+
+
 def panel(table, stray=None):
     """Boolean mask and message template per detector, aligned with `episodes`."""
     z = {k: robust_z(v) for k, v in table.items()}
@@ -75,23 +91,26 @@ def evaluate():
     stray_path = paths.artifact("residual.json")
     if os.path.exists(stray_path):
         with open(stray_path) as f:
-            scores = json.load(f)
-        key = next(iter(next(iter(scores.values()))))
-        values = np.array([scores[f"episode_{e:04d}"][key] for e in episodes], dtype=float)
-        table[key] = values
+            residual = json.load(f)
+        table["stray_score"] = np.array(
+            [residual[f"episode_{e:04d}"]["score"] for e in episodes], dtype=float)
         stray = {
-            "mask": robust_z(values) > 4.0,
-            "message": "debris was left outside the basket at the end of the episode",
+            "mask": np.array([residual[f"episode_{e:04d}"]["defective"] for e in episodes]),
+            "message": [describe_stray(residual[f"episode_{e:04d}"]) for e in episodes],
         }
 
     detectors = panel(table, stray)
     fired = {}
     for i, episode in enumerate(episodes):
-        hits = [
-            {"detector": name, "why": message.format(**features[f"episode_{episode:04d}"])}
-            for name, (mask, message) in detectors.items()
-            if bool(np.asarray(mask)[i])
-        ]
+        hits = []
+        for name, (mask, message) in detectors.items():
+            if not bool(np.asarray(mask)[i]):
+                continue
+            # most detectors carry a format string; the stray detector carries
+            # one already-rendered sentence per episode
+            why = message[i] if isinstance(message, list) else \
+                message.format(**features[f"episode_{episode:04d}"])
+            hits.append({"detector": name, "why": why})
         fired[episode] = hits
     return episodes, detectors, fired
 
