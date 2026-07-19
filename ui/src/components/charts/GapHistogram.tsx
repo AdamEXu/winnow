@@ -3,8 +3,8 @@ import type { Summary } from "../../types";
 import { niceTicks } from "../../lib/stats";
 
 const W = 960;
-const H = 320;
-const M = { top: 56, right: 16, bottom: 34, left: 56 };
+const H = 300;
+const M = { top: 64, right: 16, bottom: 40, left: 52 };
 
 interface Hover {
   bin: number;
@@ -12,8 +12,8 @@ interface Hover {
   py: number;
 }
 
-/** The hero: distribution of inter-frame gaps across all 32k frames.
- *  Bimodal at 1 tick and 2 ticks of the recorder clock. */
+/** Distribution of all inter-frame gaps. Bimodal at exactly one and two
+ *  recorder ticks: dropped frames, not clock jitter. */
 export default function GapHistogram({ summary }: { summary: Summary }) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const [hover, setHover] = useState<Hover | null>(null);
@@ -29,7 +29,7 @@ export default function GapHistogram({ summary }: { summary: Summary }) {
 
   const tickMs = 1000 / claimed_fps;
 
-  // The two modes, found from the data: tallest bin below and above 1.5 ticks.
+  // The two modes: tallest bin below and above 1.5 ticks.
   const split = tickMs * 1.5;
   let mode1 = 0;
   let mode2 = counts.length - 1;
@@ -63,11 +63,11 @@ export default function GapHistogram({ summary }: { summary: Summary }) {
     const x = xOf(ms);
     return (
       <g>
-        <line x1={x} y1={M.top - 30} x2={x} y2={H - M.bottom} stroke="var(--color-amberhi)" strokeWidth={1} strokeDasharray="2 4" opacity={0.8} />
-        <text x={x} y={M.top - 36} textAnchor="middle" fill="var(--color-amberhi)" fontSize={13} fontFamily="var(--font-mono)" fontWeight={600}>
+        <line x1={x} y1={M.top - 32} x2={x} y2={H - M.bottom} stroke="var(--color-ink)" strokeWidth={1} strokeDasharray="2 4" opacity={0.55} />
+        <text x={x} y={M.top - 40} textAnchor="middle" fill="var(--color-ink)" fontSize={13.5} fontWeight={700}>
           {label}
         </text>
-        <text x={x} y={M.top - 20} textAnchor="middle" fill="var(--color-ink2)" fontSize={11} fontFamily="var(--font-mono)">
+        <text x={x} y={M.top - 24} textAnchor="middle" fill="var(--color-ink2)" fontSize={11.5} fontFamily="var(--font-mono)">
           {sub}
         </text>
       </g>
@@ -95,8 +95,8 @@ export default function GapHistogram({ summary }: { summary: Summary }) {
           </g>
         ))}
 
-        {cursor(tickMs, "1 tick", `${tickMs.toFixed(1)} ms`)}
-        {cursor(tickMs * 2, "2 ticks", `${(tickMs * 2).toFixed(1)} ms`)}
+        {cursor(tickMs, "on the next tick", `${tickMs.toFixed(1)} ms`)}
+        {cursor(tickMs * 2, "a whole tick late", `${(tickMs * 2).toFixed(1)} ms`)}
 
         {counts.map((c, i) => {
           if (c === 0) return null;
@@ -112,8 +112,8 @@ export default function GapHistogram({ summary }: { summary: Summary }) {
               width={bw}
               height={Math.max(1.5, H - M.bottom - by)}
               rx={1.5}
-              fill={isMode ? "var(--color-amberhi)" : "var(--color-amber)"}
-              opacity={hover && hover.bin === i ? 1 : isMode ? 0.95 : 0.8}
+              fill="var(--color-amber)"
+              opacity={hover && hover.bin === i ? 1 : isMode ? 0.95 : 0.65}
             />
           );
         })}
@@ -122,22 +122,22 @@ export default function GapHistogram({ summary }: { summary: Summary }) {
           <text
             key={i}
             x={xOf(edges[i + 1]) + 8}
-            y={yOf(counts[i]) + 12}
+            y={yOf(counts[i]) + 13}
             textAnchor="start"
             fill="var(--color-ink)"
             fontSize={13}
             fontFamily="var(--font-mono)"
-            fontWeight={600}
+            fontWeight={500}
           >
-            {counts[i].toLocaleString("en-US")} · {((counts[i] / total) * 100).toFixed(1)}%
+            {counts[i].toLocaleString("en-US")} gaps · {((counts[i] / total) * 100).toFixed(1)}%
           </text>
         ))}
 
-        <text x={valleyX} y={H - M.bottom - 60} textAnchor="middle" fill="var(--color-ink3)" fontSize={12.5}>
+        <text x={valleyX} y={H - M.bottom - 64} textAnchor="middle" fill="var(--color-ink2)" fontSize={12.5}>
           near-nothing in between —
         </text>
-        <text x={valleyX} y={H - M.bottom - 42} textAnchor="middle" fill="var(--color-ink3)" fontSize={12.5}>
-          dropped ticks, not clock jitter
+        <text x={valleyX} y={H - M.bottom - 47} textAnchor="middle" fill="var(--color-ink2)" fontSize={12.5}>
+          dropped frames, not clock jitter
         </text>
 
         <line x1={M.left} y1={H - M.bottom} x2={W - M.right} y2={H - M.bottom} stroke="var(--color-line2)" strokeWidth={1} />
@@ -149,21 +149,18 @@ export default function GapHistogram({ summary }: { summary: Summary }) {
             </text>
           </g>
         ))}
-        <text x={W - M.right} y={H - 4} textAnchor="end" fill="var(--color-ink3)" fontSize={11} fontFamily="var(--font-mono)">
-          gap between consecutive frames, ms
-        </text>
-        <text x={M.left - 42} y={M.top - 36} fill="var(--color-ink3)" fontSize={11} fontFamily="var(--font-mono)">
-          gaps
+        <text x={W - M.right} y={H - 6} textAnchor="end" fill="var(--color-ink2)" fontSize={11.5}>
+          time between consecutive frames, ms
         </text>
       </svg>
 
       {hover && counts[hover.bin] > 0 && (
         <div
-          className="pointer-events-none absolute z-10 rounded-sm border border-line2 bg-panel2 px-3 py-2 font-mono text-xs shadow-lg"
+          className="pointer-events-none absolute z-10 border border-line2 bg-mount px-3 py-2 font-mono text-xs shadow-md"
           style={{ left: Math.min(hover.px + 14, (wrapRef.current?.clientWidth ?? 600) - 190), top: hover.py - 44 }}
         >
           <div className="text-ink2">
-            {edges[hover.bin].toFixed(1)}–{edges[hover.bin + 1].toFixed(1)} ms
+            {edges[hover.bin].toFixed(1)}&ndash;{edges[hover.bin + 1].toFixed(1)} ms
           </div>
           <div className="text-ink">
             {counts[hover.bin].toLocaleString("en-US")} gaps · {((counts[hover.bin] / total) * 100).toFixed(1)}%

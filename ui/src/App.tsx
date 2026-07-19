@@ -1,23 +1,22 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useData } from "./lib/useData";
-import { METRICS, metricByKey, metricValue } from "./lib/metrics";
+import { METRICS, metricValue } from "./lib/metrics";
 import type { Clause } from "./lib/query";
 import { episodePasses } from "./lib/query";
 import type { Extent } from "./lib/stats";
 import { extentOf } from "./lib/stats";
+import Masthead from "./components/Masthead";
 import TimingSection from "./components/TimingSection";
-import SectionHeader from "./components/SectionHeader";
-import QueryBuilder from "./components/QueryBuilder";
-import EpisodeGrid, { type GridFilter } from "./components/EpisodeGrid";
-import ScatterSection from "./components/ScatterSection";
-import Adjudication from "./components/Adjudication";
+import DefectsSection from "./components/DefectsSection";
+import AdjudicationSection from "./components/AdjudicationSection";
+import ExportSection from "./components/ExportSection";
 import EpisodeDetail from "./components/EpisodeDetail";
 
 const NAV = [
-  { id: "timing", label: "timing" },
-  { id: "triage", label: "triage" },
-  { id: "scatter", label: "scatter" },
-  { id: "adjudication", label: "adjudication" },
+  { id: "timing", label: "01 timing" },
+  { id: "defects", label: "02 defects" },
+  { id: "adjudication", label: "03 adjudication" },
+  { id: "export", label: "export" },
 ];
 
 export default function App() {
@@ -27,50 +26,39 @@ export default function App() {
     { id: 1, metric: "pct_dropped", op: "<", value: 40 },
     { id: 2, metric: "debris_end", op: "<", value: 0.3 },
   ]);
-  const [sortKey, setSortKey] = useState("pct_dropped");
-  const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
-  const [filter, setFilter] = useState<GridFilter>("all");
   const [selected, setSelected] = useState<number | null>(null);
 
-  const candidates = useMemo(() => data?.episodes.filter((e) => !e.warmup) ?? [], [data]);
-  const warmups = useMemo(() => data?.episodes.filter((e) => e.warmup) ?? [], [data]);
+  const episodes = useMemo(() => data?.episodes ?? [], [data]);
 
   const extents = useMemo(() => {
     const m = new Map<string, Extent>();
     for (const def of METRICS) {
-      m.set(def.key, extentOf(candidates.map((e) => metricValue(e, def.key))));
+      m.set(def.key, extentOf(episodes.map((e) => metricValue(e, def.key))));
     }
     return m;
-  }, [candidates]);
+  }, [episodes]);
 
   const corpusValues = useMemo(() => {
     const m = new Map<string, number[]>();
     for (const def of METRICS) {
-      m.set(def.key, candidates.map((e) => metricValue(e, def.key)));
+      m.set(def.key, episodes.map((e) => metricValue(e, def.key)));
     }
     return m;
-  }, [candidates]);
+  }, [episodes]);
 
   const keptIds = useMemo(
-    () => new Set(candidates.filter((e) => episodePasses(e, clauses)).map((e) => e.episode)),
-    [candidates, clauses],
+    () => new Set(episodes.filter((e) => episodePasses(e, clauses)).map((e) => e.episode)),
+    [episodes, clauses],
   );
 
-  const ordered = useMemo(() => {
-    const filtered = candidates.filter((e) => {
-      if (filter === "good") return e.labelled === "good";
-      if (filter === "bad") return e.labelled === "bad";
-      if (filter === "panel") return e.detections.length > 0;
-      return true;
-    });
-    const dir = sortDir === "asc" ? 1 : -1;
-    return [...filtered].sort((a, b) => (metricValue(a, sortKey) - metricValue(b, sortKey)) * dir);
-  }, [candidates, filter, sortKey, sortDir]);
+  const medianDuration = useMemo(() => {
+    const d = episodes.map((e) => e.metrics.duration_s).sort((a, b) => a - b);
+    if (d.length === 0) return 0;
+    const mid = Math.floor(d.length / 2);
+    return d.length % 2 ? d[mid] : (d[mid - 1] + d[mid]) / 2;
+  }, [episodes]);
 
-  const navOrder = useMemo(
-    () => [...warmups.map((e) => e.episode), ...ordered.map((e) => e.episode)],
-    [warmups, ordered],
-  );
+  const navOrder = useMemo(() => episodes.map((e) => e.episode), [episodes]);
 
   const step = useCallback(
     (delta: number) => {
@@ -118,29 +106,23 @@ export default function App() {
   }
 
   const s = data.summary;
-  const selectedEpisode = selected === null ? null : data.episodes.find((e) => e.episode === selected);
-  const sortDef = metricByKey.get(sortKey) ?? METRICS[0];
+  const hero = episodes[0];
+  const selectedEpisode = selected === null ? null : episodes.find((e) => e.episode === selected);
 
   return (
     <div className="min-h-screen">
-      <header className="sticky top-0 z-30 border-b border-line bg-bg/90 backdrop-blur">
-        <div className="mx-auto flex max-w-[1400px] items-baseline gap-x-6 px-6 py-3">
-          <span className="text-lg font-semibold tracking-tight text-ink">
-            winnow
-            <span className="ml-2.5 hidden text-xs font-normal text-ink3 sm:inline">
-              demonstration dataset triage
-            </span>
-          </span>
-          <span className="hidden font-mono text-xs text-ink3 md:inline">
-            {s.n_episodes} episodes · {s.n_frames.toLocaleString("en-US")} frames ·{" "}
-            {s.wall_clock_min.toFixed(1)} min
-          </span>
-          <nav className="ml-auto flex gap-4 font-mono text-xs">
+      <header className="sticky top-0 z-30 border-b border-line bg-paper/92 backdrop-blur">
+        <div className="mx-auto flex max-w-[1180px] items-baseline gap-x-6 px-6 py-2.5">
+          <a href="#top" className="display text-sm font-black tracking-tight text-ink uppercase">
+            Winnow
+          </a>
+          <span className="hidden text-xs text-ink3 sm:inline">a dataset audit, in three findings</span>
+          <nav className="ml-auto flex gap-5 font-mono text-xs" aria-label="sections">
             {NAV.map((n) => (
               <a
                 key={n.id}
                 href={`#${n.id}`}
-                className="text-ink3 underline-offset-4 transition-colors hover:text-amberhi hover:underline"
+                className="text-ink2 underline-offset-4 transition-colors hover:text-ink hover:underline"
               >
                 {n.label}
               </a>
@@ -149,51 +131,36 @@ export default function App() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-[1400px] space-y-24 px-6 py-12">
+      <main id="top" className="mx-auto max-w-[1180px] space-y-24 px-6 pt-10 pb-16">
+        {hero && (
+          <Masthead
+            summary={s}
+            heroName={hero.name}
+            heroPicks={hero.strip.picks}
+            heroHz={hero.metrics.true_hz}
+          />
+        )}
         <TimingSection summary={s} />
-
-        <section id="triage" className="scroll-mt-20">
-          <SectionHeader
-            eyebrow="triage — the whole corpus"
-            title="65 episodes, one predicate away from a training set"
-            sub={`A panel of ${s.detectors.length} detectors scores every episode and explains itself in plain sentences. The query below is the same WHERE clause the export pipeline runs — drag a threshold and watch the training set change.`}
-          />
-          <QueryBuilder
-            clauses={clauses}
-            onChange={setClauses}
-            extents={extents}
-            keptCount={keptIds.size}
-            candidateCount={candidates.length}
-            warmupCount={warmups.length}
-          />
-          <div className="mt-6">
-            <EpisodeGrid
-              ordered={ordered}
-              warmups={warmups}
-              sortDef={sortDef}
-              sortDir={sortDir}
-              onSortKey={setSortKey}
-              onSortDir={() => setSortDir((d) => (d === "asc" ? "desc" : "asc"))}
-              filter={filter}
-              onFilter={setFilter}
-              keptIds={keptIds}
-              selected={selected}
-              onSelect={setSelected}
-            />
-          </div>
-        </section>
-
-        <ScatterSection episodes={data.episodes} keptIds={keptIds} onSelect={setSelected} />
-
-        <Adjudication data={data} onSelect={setSelected} />
+        <DefectsSection episodes={episodes} medianDuration={medianDuration} onSelect={setSelected} />
+        <AdjudicationSection episodes={episodes} onSelect={setSelected} />
+        <ExportSection
+          episodes={episodes}
+          clauses={clauses}
+          onClauses={setClauses}
+          extents={extents}
+          keptIds={keptIds}
+          selected={selected}
+          onSelect={setSelected}
+        />
       </main>
 
       <footer className="border-t border-line">
-        <div className="mx-auto flex max-w-[1400px] flex-wrap items-baseline gap-x-6 gap-y-1 px-6 py-6 font-mono text-[11px] text-ink3">
+        <div className="mx-auto flex max-w-[1180px] flex-wrap items-baseline gap-x-6 gap-y-1 px-6 py-6 font-mono text-[11px] text-ink2">
           <span>winnow · built on the Rerun query API</span>
-          <span>detectors: {s.detectors.join(", ")}</span>
-          <span>cameras: {s.cameras.join(", ")}</span>
-          <span className="ml-auto">arrow keys step through episodes · esc closes detail</span>
+          <span>
+            every figure computed from the recording itself; none taken from its metadata
+          </span>
+          <span className="ml-auto">arrow keys step through episodes · esc closes the record</span>
         </div>
       </footer>
 

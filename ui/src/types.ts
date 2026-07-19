@@ -1,4 +1,4 @@
-export type Verdict = "good" | "bad" | "batch";
+export type Verdict = "good" | "bad";
 
 export interface Summary {
   n_episodes: number;
@@ -19,6 +19,9 @@ export interface Detection {
   why: string;
 }
 
+/** [winner, reason] — a human re-watched the footage and ruled. */
+export type Adjudication = [string, string];
+
 export interface EpisodeSeries {
   debris: number[];
   dt_ms: number[];
@@ -29,11 +32,11 @@ export interface EpisodeSeries {
 export interface Episode {
   episode: number;
   name: string;
-  warmup: boolean;
   labelled: Verdict;
   metrics: Record<string, number>;
   features: Record<string, number>;
   detections: Detection[];
+  adjudicated: Adjudication | null;
   series: EpisodeSeries;
   strip: { picks: number[]; n_frames: number };
 }

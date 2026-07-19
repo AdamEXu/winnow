@@ -2,10 +2,12 @@ import { useEffect } from "react";
 import type { Episode } from "../types";
 import {
   METRICS,
-  VERDICT_COLOR_HI,
-  VERDICT_LABEL,
+  detectorName,
+  parseEvidenceMarks,
+  splitWhy,
   thumbUrl,
 } from "../lib/metrics";
+import EvidencePhoto from "./EvidencePhoto";
 import SeriesPanel from "./charts/SeriesPanel";
 import DistributionRow from "./charts/DistributionRow";
 
@@ -51,43 +53,34 @@ export default function EpisodeDetail({
   }, []);
 
   const m = episode.metrics;
+  const marks = episode.detections.flatMap((d) => parseEvidenceMarks(d.why));
   const navBtn =
-    "rounded-sm border border-line2 px-2.5 py-1 font-mono text-xs text-ink2 hover:border-amber hover:text-amberhi";
+    "border border-line2 px-2.5 py-1 font-mono text-xs text-ink2 hover:border-ink hover:text-ink";
+  const chip = "border px-2.5 py-0.5 font-mono text-[11px]";
 
   return (
-    <div className="fixed inset-0 z-50" role="dialog" aria-modal="true" aria-label={`${episode.name} detail`}>
+    <div className="fixed inset-0 z-50" role="dialog" aria-modal="true" aria-label={`${episode.name} record`}>
       <button
         type="button"
-        aria-label="close detail"
-        className="absolute inset-0 cursor-default bg-black/60 backdrop-blur-[2px]"
+        aria-label="close record"
+        className="absolute inset-0 cursor-default bg-ink/40 backdrop-blur-[2px]"
         onClick={onClose}
       />
-      <div className="slide-in absolute inset-y-0 right-0 w-full max-w-[880px] overflow-y-auto border-l border-line bg-panel">
-        <div className="sticky top-0 z-10 border-b border-line bg-panel/95 px-6 py-4 backdrop-blur">
+      <div className="slide-in absolute inset-y-0 right-0 w-full max-w-[880px] overflow-y-auto border-l-4 border-ink bg-paper">
+        <div className="sticky top-0 z-10 border-b border-line bg-paper/95 px-6 py-4 backdrop-blur">
           <div className="flex flex-wrap items-center gap-3">
-            <h3 className="font-mono text-2xl font-semibold tracking-tight text-ink">{episode.name}</h3>
+            <h3 className="display text-2xl font-black tracking-tight text-ink">
+              EP {String(episode.episode).padStart(2, "0")}
+            </h3>
+            <span className={`${chip} border-line2 text-ink2`}>hand label: {episode.labelled}</span>
             <span
-              className="rounded-full border px-2.5 py-0.5 font-mono text-[11px]"
-              style={{ color: VERDICT_COLOR_HI[episode.labelled], borderColor: "var(--color-line2)" }}
-            >
-              human: {VERDICT_LABEL[episode.labelled]}
-            </span>
-            <span
-              className={`rounded-full border border-line2 px-2.5 py-0.5 font-mono text-[11px] ${
-                episode.detections.length ? "text-badhi" : "text-ink3"
-              }`}
+              className={`${chip} ${episode.detections.length ? "border-flag font-medium text-flagdeep" : "border-line2 text-ink3"}`}
             >
               panel: {episode.detections.length ? `${episode.detections.length} fired` : "clear"}
             </span>
-            {!episode.warmup && (
-              <span
-                className={`rounded-full border border-line2 px-2.5 py-0.5 font-mono text-[11px] ${
-                  kept ? "text-goodhi" : "text-ink3"
-                }`}
-              >
-                query: {kept ? "kept" : "rejected"}
-              </span>
-            )}
+            <span className={`${chip} ${kept ? "border-keep text-keep" : "border-line2 text-ink3"}`}>
+              query: {kept ? "kept" : "cut"}
+            </span>
             <div className="ml-auto flex items-center gap-1.5">
               <button type="button" className={navBtn} onClick={onPrev} aria-label="previous episode">
                 &#8592; prev
@@ -102,29 +95,49 @@ export default function EpisodeDetail({
           </div>
           <p className="mt-2 font-mono text-xs text-ink2">
             {m.duration_s.toFixed(1)} s · {Math.round(m.n_frames).toLocaleString("en-US")} frames ·{" "}
-            {m.true_hz.toFixed(2)} Hz true · {m.pct_dropped.toFixed(1)} % ticks dropped · worst gap{" "}
-            {Math.round(m.worst_gap_ms)} ms
+            {m.true_hz.toFixed(2)} Hz measured · {m.pct_dropped.toFixed(1)} % ticks dropped · longest
+            gap {Math.round(m.worst_gap_ms)} ms
           </p>
         </div>
 
         <div className="space-y-8 px-6 py-6">
           <section aria-label="filmstrip">
             <div className="grid grid-cols-3 gap-1.5 sm:grid-cols-6">
-              {episode.strip.picks.map((frame, i) => (
-                <figure key={i}>
-                  <img
-                    src={thumbUrl(episode.name, i)}
-                    alt={`${episode.name} frame ${frame}`}
-                    loading="lazy"
-                    className="aspect-4/3 w-full rounded-sm border border-line object-cover"
-                  />
-                  <figcaption className="mt-1 text-center font-mono text-[10px] text-ink3">
-                    f{frame}
-                  </figcaption>
-                </figure>
-              ))}
+              {episode.strip.picks.map((frame, i) => {
+                const isLast = i === episode.strip.picks.length - 1;
+                return (
+                  <figure key={i}>
+                    <EvidencePhoto
+                      src={thumbUrl(episode.name, i)}
+                      alt={`${episode.name} frame ${frame}`}
+                      marks={isLast ? marks : []}
+                      labelled={false}
+                    />
+                    <figcaption className="mt-1 text-center font-mono text-[10px] text-ink3">
+                      f{frame}
+                    </figcaption>
+                  </figure>
+                );
+              })}
             </div>
+            {marks.length > 0 && (
+              <p className="mt-1.5 text-[12px] text-ink3">
+                crosshairs on the final frame: the detector&rsquo;s claimed coordinates
+              </p>
+            )}
           </section>
+
+          {episode.adjudicated && (
+            <section aria-label="adjudication" className="border-2 border-keep px-4 py-3">
+              <h4 className="text-[12px] font-bold tracking-wide text-keep uppercase">
+                Adjudicated — panel was right
+              </h4>
+              <p className="mt-1 text-sm leading-snug text-ink">
+                The hand label and the panel disagreed here. On re-watching the footage:{" "}
+                {episode.adjudicated[1]}.
+              </p>
+            </section>
+          )}
 
           <section aria-label="detections">
             <h4 className="mb-3 font-mono text-xs font-semibold tracking-[0.2em] text-ink2 uppercase">
@@ -133,14 +146,19 @@ export default function EpisodeDetail({
             {episode.detections.length === 0 ? (
               <p className="text-sm text-ink3">No detector fired on this episode.</p>
             ) : (
-              <ul className="space-y-2">
+              <ul className="space-y-3">
                 {episode.detections.map((d, i) => (
-                  <li
-                    key={i}
-                    className="flex flex-wrap items-baseline gap-x-3 gap-y-1 rounded-sm border border-bad/30 bg-bad/5 px-3 py-2.5"
-                  >
-                    <span className="font-mono text-xs font-semibold text-badhi">{d.detector}</span>
-                    <span className="text-sm leading-snug text-ink">{d.why}</span>
+                  <li key={i} className="border-l-4 border-flag pl-4">
+                    <span className="text-[13px] font-semibold text-flagdeep">
+                      {detectorName(d.detector)}
+                    </span>
+                    <ul className="mt-1 space-y-1">
+                      {splitWhy(d.why).map((c) => (
+                        <li key={c} className="testimony text-[15px] leading-snug text-ink">
+                          &ldquo;{c}&rdquo;
+                        </li>
+                      ))}
+                    </ul>
                   </li>
                 ))}
               </ul>
@@ -151,7 +169,7 @@ export default function EpisodeDetail({
             <h4 className="mb-3 font-mono text-xs font-semibold tracking-[0.2em] text-ink2 uppercase">
               signals · shared time axis
             </h4>
-            <div className="rounded-sm border border-line bg-inset px-3 pt-1 pb-2">
+            <div className="border border-line bg-mount px-3 pt-1 pb-2">
               <SeriesPanel episode={episode} tickMs={tickMs} />
             </div>
           </section>
@@ -161,7 +179,8 @@ export default function EpisodeDetail({
               against the corpus
             </h4>
             <p className="mb-3 text-xs text-ink3">
-              each row is the full distribution across the other episodes; the marked value is this one
+              each row: the other 57 episodes as faint ticks, this one as the dot &mdash; hover a
+              name for what it means
             </p>
             <div className="space-y-2.5">
               {DETAIL_METRIC_KEYS.map((key) => {
@@ -174,7 +193,6 @@ export default function EpisodeDetail({
                     def={def}
                     corpus={values}
                     value={episode.features[key] ?? episode.metrics[key] ?? 0}
-                    verdict={episode.labelled}
                   />
                 );
               })}

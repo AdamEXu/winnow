@@ -15,10 +15,10 @@ interface RowSpec {
 }
 
 const ROWS: RowSpec[] = [
-  { key: "debris", label: "debris remaining", unit: "fraction", digits: 2, color: "var(--color-datahi)" },
-  { key: "dt_ms", label: "inter-frame gap", unit: "ms", digits: 1, color: "var(--color-amberhi)" },
-  { key: "motion", label: "motion energy", unit: "", digits: 2, color: "var(--color-datahi)" },
-  { key: "drift", label: "leader-follower drift", unit: "", digits: 2, color: "var(--color-datahi)" },
+  { key: "debris", label: "pasta remaining on the table", unit: "fraction", digits: 2, color: "var(--color-blue)" },
+  { key: "dt_ms", label: "gap between frames", unit: "ms", digits: 1, color: "var(--color-amber)" },
+  { key: "motion", label: "motion energy", unit: "", digits: 2, color: "var(--color-blue)" },
+  { key: "drift", label: "leader-follower drift", unit: "", digits: 2, color: "var(--color-blue)" },
 ];
 
 /** The four per-episode series stacked on a shared time axis,
@@ -126,7 +126,7 @@ export default function SeriesPanel({ episode, tickMs }: { episode: Episode; tic
         ))}
         {frac !== null && (
           <span
-            className="absolute top-1 -translate-x-1/2 rounded-sm bg-panel2 px-1 font-mono text-[10px] text-ink"
+            className="absolute top-1 -translate-x-1/2 border border-line bg-mount px-1 font-mono text-[10px] text-ink"
             style={{ left: `${frac * 100}%` }}
           >
             {(frac * duration).toFixed(1)}s

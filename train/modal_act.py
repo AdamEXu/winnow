@@ -133,9 +133,8 @@ def train(steps: int = 25_000, batch_size: int = 8, num_workers: int = 8,
         "--policy.device=cuda",
         "--policy.use_amp=true",
         "--policy.push_to_hub=false",
-        # without this the schedule is sized for the 100k default and the
-        # learning rate never decays, which leaves a noisier final policy
-        f"--policy.scheduler_decay_steps={steps}",
+        # no scheduler_decay_steps here: ACT trains at a constant learning rate
+        # and ACTConfig has no such field, so passing it fails config parsing
         f"--output_dir={output}",
         f"--job_name={run_name}",
         f"--steps={steps}",

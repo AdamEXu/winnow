@@ -1,5 +1,3 @@
-import type { Data, Episode } from "../types";
-
 export interface Extent {
   min: number;
   max: number;
@@ -31,31 +29,4 @@ export function niceTicks(min: number, max: number, target = 5): number[] {
     ticks.push(+v.toFixed(10));
   }
   return ticks;
-}
-
-export interface Agreement {
-  candidates: Episode[];
-  humanFlagged: Episode[];
-  panelFlagged: Episode[];
-  both: Episode[];
-  humanOnly: Episode[];
-  panelOnly: Episode[];
-}
-
-/** Two-way comparison between the human label and the detector panel,
- *  computed over non-warm-up episodes only. */
-export function computeAgreement(data: Data): Agreement {
-  const candidates = data.episodes.filter((e) => !e.warmup);
-  const humanFlagged = candidates.filter((e) => e.labelled === "bad");
-  const panelFlagged = candidates.filter((e) => e.detections.length > 0);
-  const panelSet = new Set(panelFlagged.map((e) => e.episode));
-  const humanSet = new Set(humanFlagged.map((e) => e.episode));
-  return {
-    candidates,
-    humanFlagged,
-    panelFlagged,
-    both: humanFlagged.filter((e) => panelSet.has(e.episode)),
-    humanOnly: humanFlagged.filter((e) => !panelSet.has(e.episode)),
-    panelOnly: panelFlagged.filter((e) => !humanSet.has(e.episode)),
-  };
 }

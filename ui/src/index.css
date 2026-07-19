@@ -1,33 +1,35 @@
-@import "@fontsource-variable/archivo";
+@import "@fontsource-variable/archivo/wdth.css";
+@import "@fontsource-variable/newsreader/wght.css";
+@import "@fontsource-variable/newsreader/wght-italic.css";
 @import "@fontsource/ibm-plex-mono/400.css";
 @import "@fontsource/ibm-plex-mono/500.css";
-@import "@fontsource/ibm-plex-mono/600.css";
 @import "tailwindcss";
 
+/*
+ * winnow — the audit the dataset wrote about itself.
+ * Palette is the robot's own table: warm-white paper, near-black tools,
+ * pasta amber for the timing story, crimson for defects.
+ * Chart colors validated (CVD + contrast) against --color-paper.
+ */
 @theme {
-  --color-bg: #0c0e11;
-  --color-panel: #12151a;
-  --color-panel2: #171b22;
-  --color-inset: #0a0c0f;
-  --color-line: #232933;
-  --color-line2: #2f3743;
-  --color-ink: #e6e9ed;
-  --color-ink2: #98a1ac;
-  --color-ink3: #5c6674;
+  --color-paper: #f4f2ec;
+  --color-paper2: #ece8dc;
+  --color-mount: #fbfaf7;
+  --color-ink: #211e18;
+  --color-ink2: #5d5749;
+  --color-ink3: #8c8476;
+  --color-line: #d9d3c4;
+  --color-line2: #b4ac9a;
 
-  --color-good: #1ca288;
-  --color-bad: #ce5245;
-  --color-batch: #7a77ba;
-  --color-amber: #c48218;
-  --color-data: #248fcc;
-
-  --color-goodhi: #43c9ad;
-  --color-badhi: #ef8175;
-  --color-batchhi: #a9a6dd;
-  --color-amberhi: #eca63a;
-  --color-datahi: #5db2e6;
+  --color-amber: #b87e0e;
+  --color-amberdeep: #8a5c05;
+  --color-flag: #a93238;
+  --color-flagdeep: #8c242b;
+  --color-keep: #3a6b42;
+  --color-blue: #3268a8;
 
   --font-sans: "Archivo Variable", system-ui, sans-serif;
+  --font-serif: "Newsreader Variable", Georgia, serif;
   --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
 }
 
@@ -36,41 +38,57 @@ html {
 }
 
 body {
-  background: var(--color-bg);
+  background: var(--color-paper);
   color: var(--color-ink);
   font-family: var(--font-sans);
+  font-variation-settings: "wdth" 100;
   -webkit-font-smoothing: antialiased;
 }
 
 ::selection {
-  background: color-mix(in oklab, var(--color-amber) 40%, transparent);
+  background: color-mix(in oklab, var(--color-amber) 30%, transparent);
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-amberhi);
+  outline: 2px solid var(--color-flag);
   outline-offset: 2px;
 }
 
-/* Tick-ruler motif: short ticks every 8px, tall ticks every 40px. */
-.ruler {
-  height: 10px;
-  background-image:
-    linear-gradient(to right, var(--color-line2) 1px, transparent 1px),
-    linear-gradient(to right, var(--color-line) 1px, transparent 1px);
-  background-size:
-    40px 10px,
-    8px 5px;
-  background-repeat: repeat-x;
-  background-position: left bottom;
+/* Display voice: expanded Archivo, for kickers and headline numerals. */
+.display {
+  font-variation-settings: "wdth" 125;
+  letter-spacing: -0.01em;
 }
 
-/* Diagonal hatch for the excluded warm-up batch. */
-.hatch {
+.display-tight {
+  font-variation-settings: "wdth" 118;
+  letter-spacing: -0.03em;
+}
+
+/* The detector speaks in serif italic — quoted testimony. */
+.testimony {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-variation-settings: "wght" 460;
+}
+
+.lede {
+  font-family: var(--font-serif);
+  font-variation-settings: "wght" 420;
+}
+
+/* Evidence photos are honest about their resolution. */
+.evidence {
+  image-rendering: pixelated;
+}
+
+/* Hatched fill for time that does not exist. */
+.hatch-missing {
   background-image: repeating-linear-gradient(
     -45deg,
-    color-mix(in oklab, var(--color-batch) 14%, transparent) 0px,
-    color-mix(in oklab, var(--color-batch) 14%, transparent) 1px,
-    transparent 1px,
+    color-mix(in oklab, var(--color-amber) 55%, transparent) 0px,
+    color-mix(in oklab, var(--color-amber) 55%, transparent) 2px,
+    transparent 2px,
     transparent 7px
   );
 }
@@ -102,7 +120,6 @@ body {
   }
 }
 
-/* Quiet scrollbars for the tool feel. */
 * {
   scrollbar-width: thin;
   scrollbar-color: var(--color-line2) transparent;
